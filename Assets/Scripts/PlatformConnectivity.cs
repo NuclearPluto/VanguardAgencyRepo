@@ -6,13 +6,13 @@ public class Platform
 {
     List<Vector3> openPositions;
     public List<Vector3> closedPositions;
-    List<Vector3> connectedPositions;
+    public List<Room> listRooms;
     float cellWidth;
 
     public Platform(Vector3 initialPosition, float cellWidth) {
-        connectedPositions = new List<Vector3>();
         openPositions = new List<Vector3>();
         closedPositions = new List<Vector3>();
+        listRooms = new List<Room>();
         openPositions.Add(initialPosition);
         this.cellWidth = cellWidth;
     }
@@ -23,8 +23,8 @@ public class Platform
         return position;
     }
 
-    public void updateConnectivity(Vector3 createPosition, int platformType) {
-        List<Vector3> tempPositions = getTempPositions(createPosition, platformType);
+    public void updateConnectivity(Room currentRoom, Vector3 createPosition, int platformType) {
+        List<Vector3> tempPositions = getTempPositions(currentRoom, createPosition, platformType);
         openPositions.Remove(createPosition);
         //Debug.Log($"Platform type is {platformType}. Amount of temp positions in tempPositions is {tempPositions.Count}");
 
@@ -38,15 +38,23 @@ public class Platform
                 openPositions.Add(tempPositions[x]);
             }
         }
+
+        foreach(Room room in listRooms) {
+            if (room.isConnectedPivot(currentRoom.getPivot())) {
+                currentRoom.connectRoom(room);
+            }
+        }
+        listRooms.Add(currentRoom);
         //Debug.Log("NEXT");
     }
 
-    private List<Vector3> getTempPositions(Vector3 createPosition, int platformType) {
+    private List<Vector3> getTempPositions(Room currentRoom, Vector3 createPosition, int platformType) {
         //Debug.Log($"Creating {platformType} at {createPosition}");
         List<Vector3> tempPositions = new List<Vector3>();
         switch (platformType) {
             case 1:
                 closedPositions.Add(createPosition);
+
                 tempPositions.Add(createPosition + new Vector3(cellWidth, 0, 0));
                 tempPositions.Add(createPosition + new Vector3(-cellWidth, 0, 0));
                 tempPositions.Add(createPosition + new Vector3(0, cellWidth, 0));
@@ -96,5 +104,8 @@ public class Platform
         else return false;
     }
 
+    public List<Room> getListRooms() {
+        return listRooms;
+    }
 }
 }

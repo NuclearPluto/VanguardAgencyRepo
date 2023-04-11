@@ -20,6 +20,15 @@ public class SelectionManager : MonoBehaviour
         {
             selectionAreaTransform.gameObject.SetActive(true);
             startPosition = GetMouseWorldPosition();
+
+            //Debug.Log("Number of rooms is " + gameObject.GetComponent<StageGeneration>().getListRooms().Count);
+            foreach (Room room in gameObject.GetComponent<StageGeneration>().getListRooms()) {
+                //Debug.Log("Current Room Pivot is " + room.getPivot());
+                if (room.isPointInRoom(startPosition)){ 
+                    Debug.Log("Point clicked is currently in a room");
+                    Debug.Log("Room ID is " + room.getRoomID());
+                }
+            }
         }
 
         if (Input.GetMouseButton(0)) {

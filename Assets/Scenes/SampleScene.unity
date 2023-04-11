@@ -455,7 +455,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: b27482f3d012dd54c824652f9963a1e7, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -695,7 +695,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Tutorial-Chan
+  m_text: Tutorial-chan
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -844,7 +844,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 7482667652216324306, guid: a2b832bb73a1d5a4288b4ef37b5dd5f5, type: 3}
   m_Color: {r: 0.6500577, g: 1, b: 0.5509434, a: 1}
   m_FlipX: 0
@@ -950,7 +950,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1536570233
 Transform:
   m_ObjectHideFlags: 0
@@ -1024,7 +1024,7 @@ GameObject:
   - component: {fileID: 1788678293}
   m_Layer: 0
   m_Name: Director
-  m_TagString: Untagged
+  m_TagString: Director
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1056,6 +1056,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3044a66df674c1f409cd6ae027444cee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Room: {fileID: 5185519455046694534, guid: 908c1c6210fc7594285a40dfbcc13d67, type: 3}
   platformCell: {fileID: 5919457637227998908, guid: 3f045bdf4b19c304393923a4e816ae8b, type: 3}
   platformCellHallway: {fileID: 922990425978033788, guid: 4cab175b24864be44932b104103a1990, type: 3}
   platformCellLeft: {fileID: 6586518506801395390, guid: f7b446c43ce1e3348a252d828e11a760, type: 3}

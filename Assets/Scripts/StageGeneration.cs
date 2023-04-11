@@ -4,8 +4,10 @@ using UnityEngine;
 
 using PlatformConnectivity;
 
+//TODO: USE SOME SORT OF DESIGN PATTERN RATHER THAN WHATEVER THIS UGLY POS IS
 public class StageGeneration : MonoBehaviour
 {
+    public GameObject Room;
     public GameObject platformCell;
     public GameObject platformCellHallway;
     public GameObject platformCellLeft;
@@ -13,7 +15,9 @@ public class StageGeneration : MonoBehaviour
     public GameObject DebugCircle;
     //stageSize - 1 = small - 2 = medium - 3 = large
     public int stageSize = 3;
+    //public bool debugToggle = false;
 
+    private List<Room> listRooms;
     private Platform platformControl;
     private Vector3 createPosition;
     private float cellWidth;
@@ -28,10 +32,8 @@ public class StageGeneration : MonoBehaviour
     {
         //Debug.Log($"DIOSNFIOWSEJFIOEWJ Current Cell Width is {cellWidth}");
         createStage(stageSize);
+        listRooms = platformControl.getListRooms();
         debugClosed();
-    }
-
-    void Update() {
     }
 
     public void createStage(int type) {
@@ -52,70 +54,97 @@ public class StageGeneration : MonoBehaviour
             int randomNum = Random.Range(0, platformsToCreate.Count);
             int platformToCreate = platformsToCreate[randomNum];
             platformsToCreate.RemoveAt(randomNum);
-            createPlatform(platformToCreate);
+            Room current = createPlatform(platformToCreate);
+            current.setPivot(createPosition);
+            current.setCellWidth(cellWidth);
+            current.setRoomType(platformToCreate);
         }
     }
 
-    public void createPlatform(int type) {
+    public Room createPlatform(int type) {
         bool dontUpdateConnectivity = false;
+        Room returnRoom = null;
         switch (type) {
             case 1:
                 createPosition = platformControl.getPosition();
-                create1x1();
+                returnRoom = create1x1();
                 break;
             case 2:
                 createPosition = platformControl.getPosition();
                 if (platformControl.isRightClosed(createPosition)) {
                     if (platformControl.isLeftClosed(createPosition)) {
-                        createPlatform(type);
+                        returnRoom = createPlatform(type);
                         dontUpdateConnectivity = true;
                     }
                     else {
                         createPosition += new Vector3(-cellWidth, 0, 0);
-                        create1x2();
+                        returnRoom = create1x2();
                     }
                 }
-                else create1x2();
+                else returnRoom = create1x2();
                 break;
             case 3:
                 createPosition = platformControl.getPosition();
                 if (platformControl.isRightClosed(createPosition)) {
                     if (platformControl.isLeftClosed(createPosition) || platformControl.isLeftClosed(createPosition + new Vector3(-cellWidth, 0, 0))) {
-                        createPlatform(type);
+                        returnRoom = createPlatform(type);
                         dontUpdateConnectivity = true;
                     }
                     else {
                         createPosition += new Vector3(-cellWidth*2, 0, 0);
-                        create1x3();
+                        returnRoom = create1x3();
                     }
                 }
                 else if (platformControl.isRightClosed(createPosition + new Vector3(cellWidth, 0, 0))) {
-                    createPlatform(type);
+                    returnRoom = createPlatform(type);
                     dontUpdateConnectivity = true;
                 }
-                else create1x3();
+                else returnRoom = create1x3();
                 break;
         }
         if (!dontUpdateConnectivity) {
-            platformControl.updateConnectivity(createPosition, type);
+            platformControl.updateConnectivity(returnRoom, createPosition, type);
         } else dontUpdateConnectivity = false;
+
+        return returnRoom;
     }
 
-    //1 x 1 platform
-    public void create1x1() {
-        GameObject test = Instantiate(platformCell, createPosition, Quaternion.identity);
+    public Room create1x1()
+    {
+        GameObject roomInstance = Instantiate(Room, createPosition, Quaternion.identity);
+        GameObject platformCellInstance = Instantiate(platformCell, createPosition, Quaternion.identity);
+
+        platformCellInstance.transform.SetParent(roomInstance.transform, true);
+
+        return roomInstance.GetComponent<Room>();
     }
 
-    public void create1x2() {
-        Instantiate(platformCellLeft, createPosition, Quaternion.identity);
-        Instantiate(platformCellRight, createPosition + new Vector3(cellWidth, 0, 0), Quaternion.identity);
+    public Room create1x2()
+    {
+        GameObject roomInstance = Instantiate(Room, createPosition, Quaternion.identity);
+        GameObject platformCellLeftInstance = Instantiate(platformCellLeft, createPosition, Quaternion.identity);
+        GameObject platformCellRightInstance = Instantiate(platformCellRight, createPosition + new Vector3(cellWidth, 0, 0), Quaternion.identity);
+
+        platformCellLeftInstance.transform.SetParent(roomInstance.transform, true);
+        platformCellRightInstance.transform.SetParent(roomInstance.transform, true);
+
+        return roomInstance.GetComponent<Room>();
     }
 
-    public void create1x3() {
-        Instantiate(platformCellLeft, createPosition, Quaternion.identity);
-        Instantiate(platformCellHallway, createPosition + new Vector3(cellWidth, 0, 0), Quaternion.identity);
-        Instantiate(platformCellRight, createPosition + new Vector3(cellWidth*2, 0, 0), Quaternion.identity);
+    public Room create1x3()
+    {
+        GameObject roomInstance = Instantiate(Room, createPosition, Quaternion.identity);
+        GameObject platformCellLeftInstance = Instantiate(platformCellLeft, createPosition, Quaternion.identity);
+        GameObject platformCellHallwayInstance = Instantiate(platformCellHallway, createPosition + new Vector3(cellWidth, 0, 0), Quaternion.identity);
+        GameObject platformCellRightInstance = Instantiate(platformCellRight, createPosition + new Vector3(cellWidth * 2, 0, 0), Quaternion.identity);
+
+        platformCellLeftInstance.transform.SetParent(roomInstance.transform, true);
+        platformCellRightInstance.transform.SetParent(roomInstance.transform, true);
+        platformCellHallwayInstance.transform.SetParent(roomInstance.transform, true);
+
+        return roomInstance.GetComponent<Room>();
     }
+
 
     private void pointerController(int movement) {
         switch (movement) {
@@ -142,5 +171,9 @@ public class StageGeneration : MonoBehaviour
         foreach(Vector3 position in platformControl.closedPositions) {
             Instantiate(DebugCircle, position, Quaternion.identity);
         }
+    }
+
+    public List<Room> getListRooms() {
+        return listRooms;
     }
 }

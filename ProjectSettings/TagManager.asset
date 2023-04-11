@@ -6,6 +6,8 @@ TagManager:
   tags:
   - PlayerSprite
   - SelectionManager
+  - Director
+  - Room
   layers:
   - Default
   - TransparentFX
