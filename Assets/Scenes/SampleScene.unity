@@ -218,7 +218,7 @@ RectTransform:
   m_Children:
   - {fileID: 1284544757}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -305,7 +305,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &258562237
 GameObject:
@@ -965,51 +965,6 @@ Transform:
   m_Children:
   - {fileID: 1164087088}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1577735769
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1577735771}
-  - component: {fileID: 1577735770}
-  m_Layer: 0
-  m_Name: SelectionManager
-  m_TagString: SelectionManager
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1577735770
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1577735769}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4ad7e4421d1a59d44a77faae99ebff43, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  selectionAreaTransform: {fileID: 1536570233}
---- !u!4 &1577735771
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1577735769}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1788678291
@@ -1022,6 +977,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1788678292}
   - component: {fileID: 1788678293}
+  - component: {fileID: 1788678294}
   m_Layer: 0
   m_Name: Director
   m_TagString: Director
@@ -1063,6 +1019,19 @@ MonoBehaviour:
   platformCellRight: {fileID: 8778073751750201320, guid: 6e35abba51a40434f9d8df1b184ba139, type: 3}
   DebugCircle: {fileID: 5035667396217942769, guid: 9dcba456eea083747b88fdccf2f1581c, type: 3}
   stageSize: 3
+--- !u!114 &1788678294
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1788678291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ad7e4421d1a59d44a77faae99ebff43, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  selectionAreaTransform: {fileID: 1536570233}
 --- !u!1 &1988684333
 GameObject:
   m_ObjectHideFlags: 0

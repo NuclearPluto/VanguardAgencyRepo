@@ -24,13 +24,32 @@ public class Platform
     }
 
     public void updateConnectivity(Room currentRoom, Vector3 createPosition, int platformType) {
+        //Debug.Log("ROOM ID TO UPDATE IS " + currentRoom.getRoomID());
         List<Vector3> tempPositions = getTempPositions(currentRoom, createPosition, platformType);
         openPositions.Remove(createPosition);
+        switch(platformType) {
+            case 2:
+                openPositions.Remove(createPosition + new Vector3(cellWidth, 0, 0));
+                break;
+            case 3:
+                openPositions.Remove(createPosition + new Vector3(cellWidth*2, 0, 0));
+                break;
+        }
         //Debug.Log($"Platform type is {platformType}. Amount of temp positions in tempPositions is {tempPositions.Count}");
 
         for (int x = 0; x < tempPositions.Count; x++) {
             //Debug.Log($"tempPosition is {tempPositions[x]}");
             if (closedPositions.Contains(tempPositions[x]) || openPositions.Contains(tempPositions[x])) {
+                if (closedPositions.Contains(tempPositions[x])) {
+                    foreach (Room room in listRooms) {
+                        foreach (Vector2 tempPosition in tempPositions) {
+                            if (room.isPointInRoom(tempPosition) && !currentRoom.getConnectedRooms().Contains(room) && currentRoom.getPivot() != room.getPivot()) {
+                                Debug.Log("Pivot " + currentRoom.getPivot() + " is not equal to " + room.getPivot());
+                                //currentRoom.connectRoom(room);
+                            }
+                        }
+                    }
+                }
                 continue;
             }
             else {
@@ -39,11 +58,6 @@ public class Platform
             }
         }
 
-        foreach(Room room in listRooms) {
-            if (room.isConnectedPivot(currentRoom.getPivot())) {
-                currentRoom.connectRoom(room);
-            }
-        }
         listRooms.Add(currentRoom);
         //Debug.Log("NEXT");
     }

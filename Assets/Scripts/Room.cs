@@ -83,4 +83,8 @@ public class Room : MonoBehaviour
     public int getRoomID() {
         return roomID;
     }
+
+    public List<Room> getConnectedRooms() {
+        return connectedRooms;
+    }
 }

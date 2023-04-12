@@ -33,6 +33,7 @@ public class StageGeneration : MonoBehaviour
         //Debug.Log($"DIOSNFIOWSEJFIOEWJ Current Cell Width is {cellWidth}");
         createStage(stageSize);
         listRooms = platformControl.getListRooms();
+        InitializeConnectivityLinkedList();
         debugClosed();
     }
 
@@ -55,9 +56,9 @@ public class StageGeneration : MonoBehaviour
             int platformToCreate = platformsToCreate[randomNum];
             platformsToCreate.RemoveAt(randomNum);
             Room current = createPlatform(platformToCreate);
-            current.setPivot(createPosition);
-            current.setCellWidth(cellWidth);
-            current.setRoomType(platformToCreate);
+            //current.setPivot(createPosition);
+            //current.setCellWidth(cellWidth);
+            //current.setRoomType(platformToCreate);
         }
     }
 
@@ -103,6 +104,9 @@ public class StageGeneration : MonoBehaviour
                 break;
         }
         if (!dontUpdateConnectivity) {
+            returnRoom.setPivot(createPosition);
+            returnRoom.setCellWidth(cellWidth);
+            returnRoom.setRoomType(type);
             platformControl.updateConnectivity(returnRoom, createPosition, type);
         } else dontUpdateConnectivity = false;
 
@@ -164,6 +168,16 @@ public class StageGeneration : MonoBehaviour
                 //move drawing pointer left
                 createPosition.x -= cellWidth;
                 break;
+        }
+    }
+
+    public void InitializeConnectivityLinkedList() {
+        for (int x = 0; x < listRooms.Count; x++) {
+            for (int y = 0; y < listRooms.Count; y++) {
+                if (listRooms[x].isPointInRoom(listRooms[y].getPivot())) {
+                    listRooms[x].connectRoom(listRooms[y]);
+                }
+            }
         }
     }
 

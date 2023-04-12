@@ -25,8 +25,12 @@ public class SelectionManager : MonoBehaviour
             foreach (Room room in gameObject.GetComponent<StageGeneration>().getListRooms()) {
                 //Debug.Log("Current Room Pivot is " + room.getPivot());
                 if (room.isPointInRoom(startPosition)){ 
-                    Debug.Log("Point clicked is currently in a room");
-                    Debug.Log("Room ID is " + room.getRoomID());
+                    //Debug.Log("Point clicked is currently in a room");
+                    //Debug.Log("Room ID is " + room.getRoomID());
+                    foreach (Room connectedRoom in room.getConnectedRooms()) {
+                        connectedRoom.gameObject.transform.GetChild(0).GetComponent<SpriteRenderer>().color = new Color(1.0f, 0.0f, 0.0f, 1.0f);
+                        Debug.Log("Connected Room Pivot is " + connectedRoom.getPivot());
+                    }
                 }
             }
         }
