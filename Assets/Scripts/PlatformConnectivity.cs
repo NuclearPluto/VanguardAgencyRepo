@@ -45,7 +45,8 @@ public class Platform
                         foreach (Vector2 tempPosition in tempPositions) {
                             if (room.isPointInRoom(tempPosition) && !currentRoom.getConnectedRooms().Contains(room) && currentRoom.getPivot() != room.getPivot()) {
                                 Debug.Log("Pivot " + currentRoom.getPivot() + " is not equal to " + room.getPivot());
-                                //currentRoom.connectRoom(room);
+                                currentRoom.connectRoom(room);
+                                room.connectRoom(currentRoom);
                             }
                         }
                     }

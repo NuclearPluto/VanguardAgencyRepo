@@ -33,7 +33,6 @@ public class StageGeneration : MonoBehaviour
         //Debug.Log($"DIOSNFIOWSEJFIOEWJ Current Cell Width is {cellWidth}");
         createStage(stageSize);
         listRooms = platformControl.getListRooms();
-        InitializeConnectivityLinkedList();
         debugClosed();
     }
 
@@ -168,16 +167,6 @@ public class StageGeneration : MonoBehaviour
                 //move drawing pointer left
                 createPosition.x -= cellWidth;
                 break;
-        }
-    }
-
-    public void InitializeConnectivityLinkedList() {
-        for (int x = 0; x < listRooms.Count; x++) {
-            for (int y = 0; y < listRooms.Count; y++) {
-                if (listRooms[x].isPointInRoom(listRooms[y].getPivot())) {
-                    listRooms[x].connectRoom(listRooms[y]);
-                }
-            }
         }
     }
 
