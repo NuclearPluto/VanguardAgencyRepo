@@ -33,6 +33,8 @@ public class StageGeneration : MonoBehaviour
         //Debug.Log($"DIOSNFIOWSEJFIOEWJ Current Cell Width is {cellWidth}");
         createStage(stageSize);
         listRooms = platformControl.getListRooms();
+        QuadTree roomQuadTree = new QuadTree(listRooms, platformControl.getMinMax());
+        //TODO: INITIALIZE QUADTREE
         debugClosed();
     }
 

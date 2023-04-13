@@ -8,6 +8,10 @@ public class Platform
     public List<Vector3> closedPositions;
     public List<Room> listRooms;
     float cellWidth;
+    float minXPosition = 0;
+    float maxXPosition = 0;
+    float minYPosition = 0;
+    float maxYPosition = 0;
 
     public Platform(Vector3 initialPosition, float cellWidth) {
         openPositions = new List<Vector3>();
@@ -26,15 +30,12 @@ public class Platform
     public void updateConnectivity(Room currentRoom, Vector3 createPosition, int platformType) {
         //Debug.Log("ROOM ID TO UPDATE IS " + currentRoom.getRoomID());
         List<Vector3> tempPositions = getTempPositions(currentRoom, createPosition, platformType);
-        openPositions.Remove(createPosition);
-        switch(platformType) {
-            case 2:
-                openPositions.Remove(createPosition + new Vector3(cellWidth, 0, 0));
-                break;
-            case 3:
-                openPositions.Remove(createPosition + new Vector3(cellWidth*2, 0, 0));
-                break;
+        Vector2 tempDimensions = getDimensionsFromPlatformType(platformType);
+        updateMinMax(createPosition, platformType);
+        for (int x = 0; x < tempDimensions.x; x++) {
+            openPositions.Remove(createPosition + new Vector3(cellWidth*tempDimensions.x, 0, 0));
         }
+
         //Debug.Log($"Platform type is {platformType}. Amount of temp positions in tempPositions is {tempPositions.Count}");
 
         for (int x = 0; x < tempPositions.Count; x++) {
@@ -44,7 +45,7 @@ public class Platform
                     foreach (Room room in listRooms) {
                         foreach (Vector2 tempPosition in tempPositions) {
                             if (room.isPointInRoom(tempPosition) && !currentRoom.getConnectedRooms().Contains(room) && currentRoom.getPivot() != room.getPivot()) {
-                                Debug.Log("Pivot " + currentRoom.getPivot() + " is not equal to " + room.getPivot());
+                               // Debug.Log("Pivot " + currentRoom.getPivot() + " is not equal to " + room.getPivot());
                                 currentRoom.connectRoom(room);
                                 room.connectRoom(currentRoom);
                             }
@@ -121,6 +122,51 @@ public class Platform
 
     public List<Room> getListRooms() {
         return listRooms;
+    }
+
+    private Vector2 getDimensionsFromPlatformType(int platformType) {
+        switch (platformType) {
+            case 1: 
+                return new Vector2(1,1);
+            case 2: 
+                return new Vector2(2,1);
+            case 3: 
+                return new Vector2(3,1);
+            default:
+                Debug.Log("UNDEFINED PLATFORM TYPE");
+                return new Vector2(-1, -1);
+        }
+    }
+
+    private void updateMinMax(Vector2 createPosition, int platformType) {
+        Vector2 tempDimensions = getDimensionsFromPlatformType(platformType);
+        if (minXPosition > (createPosition.x - cellWidth/2))
+        {
+            minXPosition = (createPosition.x - cellWidth/2);
+        }
+        if (maxXPosition < (createPosition.x + cellWidth/2 + cellWidth*(tempDimensions.x-1)))
+        {
+            maxXPosition = (createPosition.x + cellWidth/2 + cellWidth*(tempDimensions.x-1));
+        }
+        if (minYPosition > (createPosition.y - cellWidth/2))
+        {
+            minYPosition = (createPosition.y - cellWidth/2);
+        }
+        if (maxYPosition < (createPosition.y + cellWidth/2 + cellWidth*(tempDimensions.y-1)))
+        {
+            maxYPosition = (createPosition.y + cellWidth/2 + cellWidth*(tempDimensions.y-1));
+        }
+    }
+
+    //min x, min y, max x, max y
+    public float[] getMinMax() {
+        float[] returnArray = new float[4] {
+            minXPosition,
+            minYPosition,
+            maxXPosition,
+            maxYPosition
+        };
+        return returnArray;
     }
 }
 }

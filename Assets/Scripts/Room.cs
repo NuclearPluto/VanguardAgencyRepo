@@ -87,4 +87,32 @@ public class Room : MonoBehaviour
     public List<Room> getConnectedRooms() {
         return connectedRooms;
     }
+
+    public float getCellWidth() {
+        return cellWidth;
+    }
+
+    public float[] getWorldDimensions() {
+        float[] returnDimensions = {
+            roomPivot.x - (cellWidth/2),
+            roomPivot.y - (cellWidth/2),
+            roomPivot.x + (cellWidth/2 + cellWidth * getDimensionsFromPlatformType().x),
+            roomPivot.y + (cellWidth/2 + cellWidth * getDimensionsFromPlatformType().y)
+        };
+        return returnDimensions;
+    }
+
+    private Vector2 getDimensionsFromPlatformType() {
+        switch (roomType) {
+            case 1: 
+                return new Vector2(1,1);
+            case 2: 
+                return new Vector2(2,1);
+            case 3: 
+                return new Vector2(3,1);
+            default:
+                Debug.Log("UNDEFINED PLATFORM TYPE");
+                return new Vector2(-1, -1);
+        }
+    }
 }
