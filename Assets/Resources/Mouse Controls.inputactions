@@ -1,0 +1,94 @@
+{
+    "name": "Mouse Controls",
+    "maps": [
+        {
+            "name": "MouseActions",
+            "id": "dc4456f4-cadf-45f5-a097-6d55401251ed",
+            "actions": [
+                {
+                    "name": "StartSelection",
+                    "type": "Button",
+                    "id": "51c3ab65-b58c-4683-80ab-4e68fa92d895",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "UpdateSelection",
+                    "type": "Button",
+                    "id": "340fc10e-408c-458d-bd9c-0c0f69f99f62",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "EndSelection",
+                    "type": "Button",
+                    "id": "89e2fb13-7496-4f9f-83da-46b8f89eb094",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "MoveToPosition",
+                    "type": "Button",
+                    "id": "db3c74d8-1bc5-451b-baef-4a72b40c561f",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "c4723e63-910b-4671-a461-4c9df6aa84de",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "StartSelection",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "871fca8d-068e-4800-939c-f4f495073bfa",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "Hold(duration=1.401298E-45)",
+                    "processors": "",
+                    "groups": "",
+                    "action": "UpdateSelection",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c6ec1af3-a3c0-4838-bb82-2f7dc47efbb4",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "EndSelection",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c5898c7e-c0c0-4e3c-91b8-5b9d7994c70e",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MoveToPosition",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
