@@ -7,7 +7,7 @@ using PlatformConnectivity;
 //TODO: USE SOME SORT OF DESIGN PATTERN RATHER THAN WHATEVER THIS UGLY POS IS
 public class StageGeneration : MonoBehaviour
 {
-    public GameObject Room;
+    public GameObject roomPrefab;
     public GameObject platformCell;
     public GameObject platformCellHallway;
     public GameObject platformCellLeft;
@@ -19,10 +19,13 @@ public class StageGeneration : MonoBehaviour
 
     private List<Room> listRooms;
     private Platform platformControl;
+    private LookupMap lookupMap;
     private Vector3 createPosition;
     private float cellWidth;
+    private int numRooms = 0;
     
     void Awake() {
+        listRooms = new List<Room>();
         createPosition = transform.position;
         cellWidth = platformCell.GetComponent<SpriteRenderer>().bounds.size.x;
         platformControl = new Platform(createPosition, cellWidth);
@@ -30,11 +33,9 @@ public class StageGeneration : MonoBehaviour
 
     void Start()
     {
-        //Debug.Log($"DIOSNFIOWSEJFIOEWJ Current Cell Width is {cellWidth}");
+        lookupMap = new LookupMap(cellWidth);
         createStage(stageSize);
-        listRooms = platformControl.getListRooms();
-        LookupMap lookupMap = new LookupMap(listRooms, platformControl.getMinMax());
-        //TODO: INITIALIZE QUADTREE
+        lookupMap.printMap();
         debugClosed();
     }
 
@@ -56,130 +57,103 @@ public class StageGeneration : MonoBehaviour
             int randomNum = Random.Range(0, platformsToCreate.Count);
             int platformToCreate = platformsToCreate[randomNum];
             platformsToCreate.RemoveAt(randomNum);
-            Room current = createPlatform(platformToCreate);
-            //current.setPivot(createPosition);
-            //current.setCellWidth(cellWidth);
-            //current.setRoomType(platformToCreate);
+            Room currentRoom = createPlatform(platformToCreate);
+            
+            listRooms.Add(currentRoom);
+            lookupMap.insertRoom(currentRoom);
+            platformControl.updateConnectivity(listRooms, currentRoom, lookupMap);
+        }
+    }
+
+    private Vector2Int getDimensionsFromPlatformType(int type) {
+        switch(type) {
+            case 1:
+                return new Vector2Int(1, 1);
+            case 2:
+                return new Vector2Int(2, 1);
+            case 3:
+                return new Vector2Int(3, 1);
+            case 4:
+                return new Vector2Int(1, 2);
+            case 5:
+                return new Vector2Int(2, 2);
+            case 6:
+                return new Vector2Int(3, 2);
+            default:
+                Debug.Log("ERROR: INVALID PLATFORM TYPE IN STAGEGENERATION.CS.getDimensionsFromPlatformType!");
+                return new Vector2Int(-1, -1);
         }
     }
 
     public Room createPlatform(int type) {
-        bool dontUpdateConnectivity = false;
-        Room returnRoom = null;
+        createPosition = platformControl.getPosition();
+        Vector2Int roomDimensions = getDimensionsFromPlatformType(type);
+        if (lookupMap.isValidPosition(createPosition, roomDimensions)) {
+            GameObject roomInstance = Instantiate(roomPrefab, createPosition, Quaternion.identity);
+            Room currentRoom = roomInstance.GetComponent<Room>();
+
+            currentRoom.setID(numRooms);
+            currentRoom.setPivot(createPosition);
+            currentRoom.setCellWidth(cellWidth);
+            currentRoom.setRoomDimensions(roomDimensions);
+            numRooms++;
+
+            instantiatePlatform(roomInstance, currentRoom, type);
+            return currentRoom;
+        }
+        else return createPlatform(type);
+    }
+
+    private void instantiatePlatform(GameObject roomInstance, Room currentRoom, int type) {
+        List <GameObject> createdCells = new List<GameObject>();
         switch (type) {
             case 1:
-                createPosition = platformControl.getPosition();
-                returnRoom = create1x1();
+                HandleType1(createPosition, createdCells);
                 break;
             case 2:
-                createPosition = platformControl.getPosition();
-                //BUG IS HERE
-                if (platformControl.isRightClosed(createPosition) || platformControl.isLeftClosed(createPosition)) {
-                    if (platformControl.isLeftClosed(createPosition)) {
-                        returnRoom = createPlatform(type);
-                        dontUpdateConnectivity = true;
-                    }
-                    else {
-                        createPosition += new Vector3(-cellWidth, 0, 0);
-                        returnRoom = create1x2();
-                    }
-                }
-                else returnRoom = create1x2();
+                HandleType2(createPosition, createdCells);
                 break;
             case 3:
-                createPosition = platformControl.getPosition();
-                if (platformControl.isRightClosed(createPosition) || platformControl.isLeftClosed(createPosition)) {
-                    if (platformControl.isLeftClosed(createPosition) || platformControl.isLeftClosed(createPosition + new Vector3(-cellWidth, 0, 0))) {
-                        returnRoom = createPlatform(type);
-                        dontUpdateConnectivity = true;
-                    }
-                    else {
-                        createPosition += new Vector3(-cellWidth*2, 0, 0);
-                        returnRoom = create1x3();
-                    }
-                }
-                else if (platformControl.isRightClosed(createPosition + new Vector3(cellWidth, 0, 0)) || platformControl.isLeftClosed(createPosition + new Vector3(cellWidth, 0, 0))) {
-                    returnRoom = createPlatform(type);
-                    dontUpdateConnectivity = true;
-                }
-                else returnRoom = create1x3();
+                HandleType3(createPosition, createdCells);
+                break;
+            default:
+                Debug.Log("ERROR! PLATFORM TYPE NOT DEFINED YET.");
                 break;
         }
-        if (!dontUpdateConnectivity) {
-            returnRoom.setPivot(createPosition);
-            returnRoom.setCellWidth(cellWidth);
-            returnRoom.setRoomType(type);
-            platformControl.updateConnectivity(returnRoom, createPosition, type);
-        } else dontUpdateConnectivity = false;
 
-        return returnRoom;
-    }
-
-    public Room create1x1()
-    {
-        GameObject roomInstance = Instantiate(Room, createPosition, Quaternion.identity);
-        GameObject platformCellInstance = Instantiate(platformCell, createPosition, Quaternion.identity);
-
-        platformCellInstance.transform.SetParent(roomInstance.transform, true);
-
-        return roomInstance.GetComponent<Room>();
-    }
-
-    public Room create1x2()
-    {
-        GameObject roomInstance = Instantiate(Room, createPosition, Quaternion.identity);
-        GameObject platformCellLeftInstance = Instantiate(platformCellLeft, createPosition, Quaternion.identity);
-        GameObject platformCellRightInstance = Instantiate(platformCellRight, createPosition + new Vector3(cellWidth, 0, 0), Quaternion.identity);
-
-        platformCellLeftInstance.transform.SetParent(roomInstance.transform, true);
-        platformCellRightInstance.transform.SetParent(roomInstance.transform, true);
-
-        return roomInstance.GetComponent<Room>();
-    }
-
-    public Room create1x3()
-    {
-        GameObject roomInstance = Instantiate(Room, createPosition, Quaternion.identity);
-        GameObject platformCellLeftInstance = Instantiate(platformCellLeft, createPosition, Quaternion.identity);
-        GameObject platformCellHallwayInstance = Instantiate(platformCellHallway, createPosition + new Vector3(cellWidth, 0, 0), Quaternion.identity);
-        GameObject platformCellRightInstance = Instantiate(platformCellRight, createPosition + new Vector3(cellWidth * 2, 0, 0), Quaternion.identity);
-
-        platformCellLeftInstance.transform.SetParent(roomInstance.transform, true);
-        platformCellRightInstance.transform.SetParent(roomInstance.transform, true);
-        platformCellHallwayInstance.transform.SetParent(roomInstance.transform, true);
-
-        return roomInstance.GetComponent<Room>();
-    }
-
-
-    private void pointerController(int movement) {
-        switch (movement) {
-            case 1: 
-                //move drawing pointer up
-                createPosition.y += cellWidth;
-                break;
-            case 2: 
-                //move drawing pointer right
-                createPosition.x += cellWidth;
-                break;
-            case 3: 
-                //move drawing pointer down
-                createPosition.y -= cellWidth;
-                break;
-            case 4: 
-                //move drawing pointer left
-                createPosition.x -= cellWidth;
-                break;
+        foreach (GameObject cell in createdCells) {
+            cell.transform.SetParent(roomInstance.transform, true);
         }
     }
 
     public void debugClosed() {
-        foreach(Vector3 position in platformControl.closedPositions) {
+        foreach(Vector2 position in platformControl.getClosedPositionsInWorldSpace()) {
             Instantiate(DebugCircle, position, Quaternion.identity);
         }
     }
 
     public List<Room> getListRooms() {
         return listRooms;
+    }
+
+    private void HandleType1(Vector3 createPosition, List<GameObject> createdCells) {
+        GameObject platformCellInstance = Instantiate(platformCell, createPosition, Quaternion.identity);
+        createdCells.Add(platformCellInstance);
+    }
+
+    private void HandleType2(Vector3 createPosition, List<GameObject> createdCells) {
+        GameObject platformCellLeftInstance = Instantiate(platformCellLeft, createPosition, Quaternion.identity);
+        GameObject platformCellRightInstance = Instantiate(platformCellRight, createPosition + new Vector3(cellWidth, 0, 0), Quaternion.identity);
+        createdCells.Add(platformCellLeftInstance);
+        createdCells.Add(platformCellRightInstance);
+    }
+
+    private void HandleType3(Vector3 createPosition, List<GameObject> createdCells) {
+        GameObject platformCellLeftInstance = Instantiate(platformCellLeft, createPosition, Quaternion.identity);
+        GameObject platformCellHallwayInstance = Instantiate(platformCellHallway, createPosition + new Vector3(cellWidth, 0, 0), Quaternion.identity);
+        GameObject platformCellRightInstance = Instantiate(platformCellRight, createPosition + new Vector3(cellWidth * 2, 0, 0), Quaternion.identity);
+        createdCells.Add(platformCellLeftInstance);
+        createdCells.Add(platformCellHallwayInstance);
+        createdCells.Add(platformCellRightInstance);
     }
 }

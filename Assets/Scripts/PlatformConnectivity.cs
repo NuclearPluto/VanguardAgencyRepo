@@ -4,169 +4,91 @@ using UnityEngine;
 namespace PlatformConnectivity {
 public class Platform
 {
-    List<Vector3> openPositions;
-    public List<Vector3> closedPositions;
-    public List<Room> listRooms;
-    float cellWidth;
-    float minXPosition = 0;
-    float maxXPosition = 0;
-    float minYPosition = 0;
-    float maxYPosition = 0;
+    private const float epsilon = 1e-6f;
 
-    public Platform(Vector3 initialPosition, float cellWidth) {
-        openPositions = new List<Vector3>();
-        closedPositions = new List<Vector3>();
-        listRooms = new List<Room>();
-        openPositions.Add(initialPosition);
+    private List<Vector2Int> openPositions;
+    private List<Vector2Int> closedPositions;
+
+    private Vector2 initialPosition;
+    private float cellWidth;
+    private LookupMap lookupMap;
+
+    public Platform(Vector2 initialPosition, float cellWidth) {
         this.cellWidth = cellWidth;
+        openPositions = new List<Vector2Int>();
+        closedPositions = new List<Vector2Int>();
+        openPositions.Add(new Vector2Int(0, 0));
+        this.initialPosition = initialPosition;
     }
 
-    public Vector3 getPosition() {
+    public Vector2 getPosition() {
         int randomIndex = Random.Range(0, openPositions.Count);
-        Vector3 position = openPositions[randomIndex];
+        Vector2 position = (Vector2)openPositions[randomIndex] * cellWidth + initialPosition;
         return position;
     }
 
-    public void updateConnectivity(Room currentRoom, Vector3 createPosition, int platformType) {
-        //Debug.Log("ROOM ID TO UPDATE IS " + currentRoom.getRoomID());
-        List<Vector3> tempPositions = getTempPositions(currentRoom, createPosition, platformType);
-        Vector2 tempDimensions = getDimensionsFromPlatformType(platformType);
-        updateMinMax(createPosition, platformType);
-        for (int x = 0; x < tempDimensions.x; x++) {
-            openPositions.Remove(createPosition + new Vector3(cellWidth*tempDimensions.x, 0, 0));
+    public List<Vector2> getClosedPositionsInWorldSpace() {
+        List<Vector2> returnList = new List<Vector2>();
+        foreach(Vector2Int position in closedPositions) {
+            returnList.Add(unitsToWorld(position));
         }
+        return returnList;
+    }
 
-        //Debug.Log($"Platform type is {platformType}. Amount of temp positions in tempPositions is {tempPositions.Count}");
+    //ONLY WORKS FOR X BY 1 ROOMS
+    private void updateClosedPositions(Room currentRoom) {
+        for (int x = 0; x < currentRoom.getUnitDimensions().x; x++) {
+            closedPositions.Add(currentRoom.getUnitPivot() + new Vector2Int(x, 0));
+            openPositions.Remove(currentRoom.getUnitPivot() + new Vector2Int(x, 0));
+        }
+    } 
 
-        for (int x = 0; x < tempPositions.Count; x++) {
-            //Debug.Log($"tempPosition is {tempPositions[x]}");
-            if (closedPositions.Contains(tempPositions[x]) || openPositions.Contains(tempPositions[x])) {
-                if (closedPositions.Contains(tempPositions[x])) {
-                    foreach (Room room in listRooms) {
-                        foreach (Vector2 tempPosition in tempPositions) {
-                            if (room.isPointInRoom(tempPosition) && !currentRoom.getConnectedRooms().Contains(room) && currentRoom.getPivot() != room.getPivot()) {
-                               // Debug.Log("Pivot " + currentRoom.getPivot() + " is not equal to " + room.getPivot());
-                                currentRoom.connectRoom(room);
-                                room.connectRoom(currentRoom);
-                            }
-                        }
-                    }
+    //ONLY WORKS FOR X BY 1 ROOMS
+    private void updateOpenPositions(List<Room> listRooms, Room currentRoom, List<Vector2Int> tempPositions) {
+        foreach (Vector2Int tempPosition in tempPositions) {
+            if (openPositions.Contains(tempPosition) || closedPositions.Contains(tempPosition)) {
+                if (closedPositions.Contains(tempPosition)) {
+                    int index = lookupMap.getIndexAt(unitsToWorld(tempPosition));
+                    listRooms[index].connectRoom(currentRoom);
+                    currentRoom.connectRoom(listRooms[index]);
                 }
-                continue;
             }
             else {
-                //Debug.Log($"Adding {tempPositions[x]} to openPositions");
-                openPositions.Add(tempPositions[x]);
+                openPositions.Add(tempPosition);
             }
         }
-
-        listRooms.Add(currentRoom);
-        //Debug.Log("NEXT");
     }
 
-    private List<Vector3> getTempPositions(Room currentRoom, Vector3 createPosition, int platformType) {
+    private Vector2 unitsToWorld(Vector2Int vector) {
+        float xPos = vector.x * cellWidth;
+        float yPos = vector.y * cellWidth;
+        return new Vector2(xPos, yPos);
+    }
+
+    public void updateConnectivity(List<Room> listRooms, Room currentRoom, LookupMap lookupMap) {
+        //Debug.Log("ROOM ID TO UPDATE IS " + currentRoom.getRoomID());
+        this.lookupMap = lookupMap;
+        List<Vector2Int> tempPositions = getSurroundPositions(currentRoom);
+        updateClosedPositions(currentRoom);
+        updateOpenPositions(listRooms, currentRoom, tempPositions);
+    }
+
+    //ONLY WORKS FOR X BY 1 ROOMS
+    private List<Vector2Int> getSurroundPositions(Room currentRoom) {
         //Debug.Log($"Creating {platformType} at {createPosition}");
-        List<Vector3> tempPositions = new List<Vector3>();
-        switch (platformType) {
-            case 1:
-                closedPositions.Add(createPosition);
+        List<Vector2Int> tempPositions = new List<Vector2Int>();
+        Vector2Int roomPivot = currentRoom.getUnitPivot();
 
-                tempPositions.Add(createPosition + new Vector3(cellWidth, 0, 0));
-                tempPositions.Add(createPosition + new Vector3(-cellWidth, 0, 0));
-                tempPositions.Add(createPosition + new Vector3(0, cellWidth, 0));
-                tempPositions.Add(createPosition + new Vector3(0, -cellWidth, 0));
-                break;
-            case 2:
-                closedPositions.Add(createPosition);
-                closedPositions.Add(createPosition + new Vector3(cellWidth, 0, 0));
-                tempPositions.Add(createPosition + new Vector3(cellWidth*2, 0, 0));
-                tempPositions.Add(createPosition + new Vector3(-cellWidth, 0, 0));
-                tempPositions.Add(createPosition + new Vector3(0, cellWidth, 0));
-                tempPositions.Add(createPosition + new Vector3(0, -cellWidth, 0));
-                tempPositions.Add(createPosition + new Vector3(cellWidth, cellWidth, 0));
-                tempPositions.Add(createPosition + new Vector3(cellWidth, -cellWidth, 0));
-                break;
-            case 3:
-                closedPositions.Add(createPosition);
-                closedPositions.Add(createPosition + new Vector3(cellWidth, 0, 0));
-                closedPositions.Add(createPosition + new Vector3(cellWidth*2, 0, 0));
-                tempPositions.Add(createPosition + new Vector3(cellWidth*3, 0, 0));
-                tempPositions.Add(createPosition + new Vector3(-cellWidth, 0, 0));
-                tempPositions.Add(createPosition + new Vector3(0, cellWidth, 0));
-                tempPositions.Add(createPosition + new Vector3(0, -cellWidth, 0));
-                tempPositions.Add(createPosition + new Vector3(cellWidth, cellWidth, 0));
-                tempPositions.Add(createPosition + new Vector3(cellWidth, -cellWidth, 0));
-                tempPositions.Add(createPosition + new Vector3(cellWidth*2, cellWidth, 0));
-                tempPositions.Add(createPosition + new Vector3(cellWidth*2, -cellWidth, 0));
-                break;
-            default:
-                Debug.Log("ERROR, UNKNOWN PLATFORM TYPE IN PLATFORMCONNECTIVITY - GET TEMP POSITIONS");
-                break;
+        //left of pivot first
+        tempPositions.Add(roomPivot + new Vector2Int(-1, 0));
+        //top and bottom for length
+        for (int x = 0; x < currentRoom.getUnitDimensions().x; x++) {
+            tempPositions.Add(roomPivot + new Vector2Int(x, 1));
+            tempPositions.Add(roomPivot + new Vector2Int(x, -1));
         }
+        //right of pivot
+        tempPositions.Add(roomPivot + new Vector2Int(currentRoom.getUnitDimensions().x, 0));
         return tempPositions;
-    }
-
-    public bool isLeftClosed(Vector3 currentPosition) {
-        if (closedPositions.Contains(currentPosition + new Vector3(-cellWidth, 0, 0))) {
-            return true;
-        }
-        else return false;
-    }
-
-    public bool isRightClosed(Vector3 currentPosition) {
-        if (closedPositions.Contains(currentPosition + new Vector3(cellWidth, 0, 0))) {
-            return true;
-        }
-        else return false;
-    }
-
-    public List<Room> getListRooms() {
-        return listRooms;
-    }
-
-    private Vector2 getDimensionsFromPlatformType(int platformType) {
-        switch (platformType) {
-            case 1: 
-                return new Vector2(1,1);
-            case 2: 
-                return new Vector2(2,1);
-            case 3: 
-                return new Vector2(3,1);
-            default:
-                Debug.Log("UNDEFINED PLATFORM TYPE");
-                return new Vector2(-1, -1);
-        }
-    }
-
-    private void updateMinMax(Vector2 createPosition, int platformType) {
-        Vector2 tempDimensions = getDimensionsFromPlatformType(platformType);
-        if (minXPosition > (createPosition.x - cellWidth/2))
-        {
-            minXPosition = (createPosition.x - cellWidth/2);
-        }
-        if (maxXPosition < (createPosition.x + cellWidth/2 + cellWidth*(tempDimensions.x-1)))
-        {
-            maxXPosition = (createPosition.x + cellWidth/2 + cellWidth*(tempDimensions.x-1));
-        }
-        if (minYPosition > (createPosition.y - cellWidth/2))
-        {
-            minYPosition = (createPosition.y - cellWidth/2);
-        }
-        if (maxYPosition < (createPosition.y + cellWidth/2 + cellWidth*(tempDimensions.y-1)))
-        {
-            maxYPosition = (createPosition.y + cellWidth/2 + cellWidth*(tempDimensions.y-1));
-        }
-    }
-
-    //min x, min y, max x, max y
-    public float[] getMinMax() {
-        float[] returnArray = new float[4] {
-            minXPosition,
-            minYPosition,
-            maxXPosition,
-            maxYPosition
-        };
-        return returnArray;
     }
 }
 }

@@ -13,11 +13,16 @@ public class Room : MonoBehaviour
     private List<Room> connectedRooms;
     private float cellWidth;
     // 1x1 = 1, 1x2 = 2, 1x3 = 3, 2x1 = 4, 2x2 = 5, 2x3 = 6
-    private int roomType;
+    private Vector2 roomDimensions;
+    private Vector2Int unitDimensions;
     // Start is called before the first frame update
     void Awake() {
         connectedRooms = new List<Room>();
         roomID = Random.Range(0, 10000);
+    }
+
+    public void setID(int given) {
+        roomID = given;
     }
 
     public void setPivot(Vector2 createPosition) {
@@ -28,8 +33,11 @@ public class Room : MonoBehaviour
         cellWidth = given;
     }
 
-    public void setRoomType(int given) {
-        roomType = given;
+    public void setRoomDimensions(Vector2Int given) {
+        float length = given.x * cellWidth;
+        float height = given.y * cellWidth;
+        roomDimensions = new Vector2(length, height);
+        unitDimensions = given;
     }
 
     public void connectRoom(Room room) {
@@ -57,15 +65,17 @@ public class Room : MonoBehaviour
     }
 
     public Vector2 getRoomDimensions() {
-        Vector2 returnVector = new Vector2(0, 0);
-        if (roomType > 0 && roomType < MAX_ROOM_X_LENGTH + 1) {
-            returnVector.x = cellWidth * roomType;
-            returnVector.y = cellWidth;
-        }
-        else Debug.Log("THIS SHOULD NOT BE SEEN");
+        return roomDimensions;
+    }
 
-        //Debug.Log("ROOM DIMENSIONS ARE " + returnVector);
-        return returnVector;
+    public Vector2Int getUnitDimensions() {
+        return unitDimensions;
+    }
+
+    public Vector2Int getUnitPivot() {
+        int xPos = (int)System.Math.Round(roomPivot.x / cellWidth);
+        int yPos = (int)System.Math.Round(roomPivot.y / cellWidth);
+        return new Vector2Int(xPos, yPos);
     }
 
     public bool isPointInRoom(Vector2 givenVector) {
@@ -96,23 +106,9 @@ public class Room : MonoBehaviour
         float[] returnDimensions = {
             roomPivot.x - (cellWidth/2),
             roomPivot.y - (cellWidth/2),
-            roomPivot.x + (cellWidth/2 + cellWidth * getDimensionsFromPlatformType().x),
-            roomPivot.y + (cellWidth/2 + cellWidth * getDimensionsFromPlatformType().y)
+            roomPivot.x + roomDimensions.x,
+            roomPivot.y + roomDimensions.y
         };
         return returnDimensions;
-    }
-
-    private Vector2 getDimensionsFromPlatformType() {
-        switch (roomType) {
-            case 1: 
-                return new Vector2(1,1);
-            case 2: 
-                return new Vector2(2,1);
-            case 3: 
-                return new Vector2(3,1);
-            default:
-                Debug.Log("UNDEFINED PLATFORM TYPE");
-                return new Vector2(-1, -1);
-        }
     }
 }
