@@ -24,15 +24,6 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "EndSelection",
-                    "type": "Button",
-                    "id": "89e2fb13-7496-4f9f-83da-46b8f89eb094",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "MoveToPosition",
                     "type": "Button",
                     "id": "db3c74d8-1bc5-451b-baef-4a72b40c561f",
@@ -62,17 +53,6 @@
                     "processors": "",
                     "groups": "",
                     "action": "UpdateSelection",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "c6ec1af3-a3c0-4838-bb82-2f7dc47efbb4",
-                    "path": "<Mouse>/leftButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "EndSelection",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

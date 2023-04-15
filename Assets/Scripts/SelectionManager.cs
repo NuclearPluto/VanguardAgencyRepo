@@ -24,8 +24,6 @@ public class SelectionManager : MonoBehaviour
         //Debug.Log(startSelection);
         updateSelection = inputActions.FindAction("UpdateSelection");
         //Debug.Log(updateSelection);
-        endSelection = inputActions.FindAction("EndSelection");
-        //Debug.Log(endSelection);
         moveToPosition = inputActions.FindAction("MoveToPosition");
         //Debug.Log(moveToPosition);
     }
@@ -39,8 +37,6 @@ public class SelectionManager : MonoBehaviour
         updateSelection.Enable();
         updateSelection.performed += OnUpdateSelection;
 
-        endSelection.Enable();
-
         moveToPosition.Enable();
         moveToPosition.performed += OnMoveToPosition;
     }
@@ -53,8 +49,6 @@ public class SelectionManager : MonoBehaviour
 
         updateSelection.performed -= OnUpdateSelection;
         updateSelection.Disable();
-
-        endSelection.Disable();
 
         moveToPosition.performed -= OnMoveToPosition;
         moveToPosition.Disable();
@@ -100,10 +94,6 @@ public class SelectionManager : MonoBehaviour
         );
         selectionAreaTransform.position = lowerLeft;
         selectionAreaTransform.localScale = upperRight - lowerLeft;
-    }
-
-    private void OnCancelStartSelection(InputAction.CallbackContext context) {
-        
     }
 
     private void OnEndSelection(InputAction.CallbackContext context)
