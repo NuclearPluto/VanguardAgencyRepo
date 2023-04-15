@@ -1013,7 +1013,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3044a66df674c1f409cd6ae027444cee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Room: {fileID: 5185519455046694534, guid: 908c1c6210fc7594285a40dfbcc13d67, type: 3}
+  roomPrefab: {fileID: 5185519455046694534, guid: 908c1c6210fc7594285a40dfbcc13d67, type: 3}
   platformCell: {fileID: 5919457637227998908, guid: 3f045bdf4b19c304393923a4e816ae8b, type: 3}
   platformCellHallway: {fileID: 922990425978033788, guid: 4cab175b24864be44932b104103a1990, type: 3}
   platformCellLeft: {fileID: 6586518506801395390, guid: f7b446c43ce1e3348a252d828e11a760, type: 3}

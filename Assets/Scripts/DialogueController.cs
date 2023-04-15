@@ -75,7 +75,7 @@ public class DialogueController : MonoBehaviour
             {
                 ShowNextDialogueLine();
                 //Debug.Log("fiosadjfioasdj");
-                GameObject tempManager = GameObject.FindWithTag("SelectionManager");
+                GameObject tempManager = GameObject.FindWithTag("Director");
                 //Debug.Log(tempManager);
                 //Debug.Log(tempManager.GetComponent<SelectionManager>());
                 currentCoroutine = StartCoroutine(ListenForPlayerSelect(tempManager.GetComponent<SelectionManager>()));
@@ -84,7 +84,7 @@ public class DialogueController : MonoBehaviour
             else if (currentLine == 16) 
             {
                 ShowNextDialogueLine();
-                GameObject tempManager = GameObject.FindWithTag("SelectionManager");
+                GameObject tempManager = GameObject.FindWithTag("Director");
                 currentCoroutine = StartCoroutine(ListenForPlayerMovement(tempManager.GetComponent<SelectionManager>()));
                 StartCoroutine(WaitForAnswer());
             }
