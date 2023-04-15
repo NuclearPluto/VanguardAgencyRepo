@@ -33,7 +33,7 @@ public class StageGeneration : MonoBehaviour
         //Debug.Log($"DIOSNFIOWSEJFIOEWJ Current Cell Width is {cellWidth}");
         createStage(stageSize);
         listRooms = platformControl.getListRooms();
-        QuadTree roomQuadTree = new QuadTree(listRooms, platformControl.getMinMax());
+        LookupMap lookupMap = new LookupMap(listRooms, platformControl.getMinMax());
         //TODO: INITIALIZE QUADTREE
         debugClosed();
     }
@@ -73,7 +73,8 @@ public class StageGeneration : MonoBehaviour
                 break;
             case 2:
                 createPosition = platformControl.getPosition();
-                if (platformControl.isRightClosed(createPosition)) {
+                //BUG IS HERE
+                if (platformControl.isRightClosed(createPosition) || platformControl.isLeftClosed(createPosition)) {
                     if (platformControl.isLeftClosed(createPosition)) {
                         returnRoom = createPlatform(type);
                         dontUpdateConnectivity = true;
@@ -87,7 +88,7 @@ public class StageGeneration : MonoBehaviour
                 break;
             case 3:
                 createPosition = platformControl.getPosition();
-                if (platformControl.isRightClosed(createPosition)) {
+                if (platformControl.isRightClosed(createPosition) || platformControl.isLeftClosed(createPosition)) {
                     if (platformControl.isLeftClosed(createPosition) || platformControl.isLeftClosed(createPosition + new Vector3(-cellWidth, 0, 0))) {
                         returnRoom = createPlatform(type);
                         dontUpdateConnectivity = true;
@@ -97,7 +98,7 @@ public class StageGeneration : MonoBehaviour
                         returnRoom = create1x3();
                     }
                 }
-                else if (platformControl.isRightClosed(createPosition + new Vector3(cellWidth, 0, 0))) {
+                else if (platformControl.isRightClosed(createPosition + new Vector3(cellWidth, 0, 0)) || platformControl.isLeftClosed(createPosition + new Vector3(cellWidth, 0, 0))) {
                     returnRoom = createPlatform(type);
                     dontUpdateConnectivity = true;
                 }
