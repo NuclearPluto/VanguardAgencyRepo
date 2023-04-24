@@ -12,6 +12,7 @@ public class StageGeneration : MonoBehaviour
     public GameObject platformCellHallway;
     public GameObject platformCellLeft;
     public GameObject platformCellRight;
+    public GameObject door;
     public GameObject DebugCircle;
     //stageSize - 1 = small - 2 = medium - 3 = large
     public int stageSize = 3;
@@ -96,6 +97,7 @@ public class StageGeneration : MonoBehaviour
             currentRoom.setPivot(createPosition);
             currentRoom.setCellWidth(cellWidth);
             currentRoom.setRoomDimensions(roomDimensions);
+            currentRoom.setDoors();
             numRooms++;
 
             instantiatePlatform(roomInstance, currentRoom, type);
@@ -134,6 +136,10 @@ public class StageGeneration : MonoBehaviour
 
     public List<Room> getListRooms() {
         return listRooms;
+    }
+
+    public LookupMap getLookupMap() {
+        return lookupMap;
     }
 
     private void HandleType1(Vector3 createPosition, List<GameObject> createdCells) {

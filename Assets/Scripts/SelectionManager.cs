@@ -30,13 +30,16 @@ public class SelectionManager : MonoBehaviour
 
     private void OnEnable()
     {
+        //left click press and let go
         startSelection.Enable();
         startSelection.performed += OnStartSelection;
         startSelection.canceled += OnEndSelection;
 
+        //left click hold
         updateSelection.Enable();
         updateSelection.performed += OnUpdateSelection;
 
+        //right click
         moveToPosition.Enable();
         moveToPosition.performed += OnMoveToPosition;
     }
@@ -62,27 +65,41 @@ public class SelectionManager : MonoBehaviour
 
     private void OnStartSelection(InputAction.CallbackContext context)
     {
-        Debug.Log("START SELECTION BEGINS");
+        //Debug.Log("START SELECTION BEGINS");
         isUpdatingSelection = true;
         selectionAreaTransform.gameObject.SetActive(true);
         startPosition = GetMouseWorldPosition();
+
         //Debug.Log("Number of rooms is " + gameObject.GetComponent<StageGeneration>().getListRooms().Count);
-        foreach (Room room in gameObject.GetComponent<StageGeneration>().getListRooms()) {
-            //Debug.Log("Current Room Pivot is " + room.getPivot());
-            if (room.isPointInRoom(startPosition)){ 
-                //Debug.Log("Point clicked is currently in a room");
-                //Debug.Log("Room ID is " + room.getRoomID());
-                foreach (Room connectedRoom in room.getConnectedRooms()) {
+        StageGeneration stage = gameObject.GetComponent<StageGeneration>();
+        List<Room> roomList = stage.getListRooms();
+        LookupMap lookupMap = stage.getLookupMap();
+        int index = lookupMap.getIndexAt(startPosition);
+        if (index != -1) {
+            Room room = roomList[index];
+            foreach (Room connectedRoom in room.getConnectedRooms()) {
                 connectedRoom.gameObject.transform.GetChild(0).GetComponent<SpriteRenderer>().color = new Color(1.0f, 0.0f, 0.0f, 1.0f);
                 Debug.Log("Connected Room Pivot is " + connectedRoom.getPivot());
-                }
             }
+            room.getLeftDoor().debugPrint();
+            room.getRightDoor().debugPrint();
         }
+        // foreach (Room room in gameObject.GetComponent<StageGeneration>().getListRooms()) {
+        //     //Debug.Log("Current Room Pivot is " + room.getPivot());
+        //     if (room.isPointInRoom(startPosition)){ 
+        //         //Debug.Log("Point clicked is currently in a room");
+        //         //Debug.Log("Room ID is " + room.getRoomID());
+        //         foreach (Room connectedRoom in room.getConnectedRooms()) {
+        //         connectedRoom.gameObject.transform.GetChild(0).GetComponent<SpriteRenderer>().color = new Color(1.0f, 0.0f, 0.0f, 1.0f);
+        //         Debug.Log("Connected Room Pivot is " + connectedRoom.getPivot());
+        //         }
+        //     }
+        // }
     }
 
     private void OnUpdateSelection(InputAction.CallbackContext context = default)
     {
-        Debug.Log("UPDATE SELECTION BEGINS");
+        //Debug.Log("UPDATE SELECTION BEGINS");
         Vector3 currentMousePosition = GetMouseWorldPosition();
         Vector3 lowerLeft = new Vector3 (
             Mathf.Min(startPosition.x, currentMousePosition.x), 
@@ -98,7 +115,7 @@ public class SelectionManager : MonoBehaviour
 
     private void OnEndSelection(InputAction.CallbackContext context)
     {
-        Debug.Log("END SELECTION BEGINS");
+        //Debug.Log("END SELECTION BEGINS");
         isUpdatingSelection = false;
         if (context.phase == InputActionPhase.Canceled) {
             selectionAreaTransform.gameObject.SetActive(false);

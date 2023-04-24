@@ -47,8 +47,8 @@ public class Platform
     private void updateOpenPositions(List<Room> listRooms, Room currentRoom, List<Vector2Int> tempPositions) {
         foreach (Vector2Int tempPosition in tempPositions) {
             if (openPositions.Contains(tempPosition) || closedPositions.Contains(tempPosition)) {
-                if (closedPositions.Contains(tempPosition)) {
-                    int index = lookupMap.getIndexAt(unitsToWorld(tempPosition));
+                int index = lookupMap.getIndexAt(unitsToWorld(tempPosition));
+                if (closedPositions.Contains(tempPosition) && !listRooms[index].isRoomConnected(currentRoom)) {
                     listRooms[index].connectRoom(currentRoom);
                     currentRoom.connectRoom(listRooms[index]);
                 }

@@ -142,7 +142,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &77557423
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1018,6 +1018,7 @@ MonoBehaviour:
   platformCellHallway: {fileID: 922990425978033788, guid: 4cab175b24864be44932b104103a1990, type: 3}
   platformCellLeft: {fileID: 6586518506801395390, guid: f7b446c43ce1e3348a252d828e11a760, type: 3}
   platformCellRight: {fileID: 8778073751750201320, guid: 6e35abba51a40434f9d8df1b184ba139, type: 3}
+  door: {fileID: 5548552976107008835, guid: ef108a9bdff1de7489bd0e45a97ed9ca, type: 3}
   DebugCircle: {fileID: 5035667396217942769, guid: 9dcba456eea083747b88fdccf2f1581c, type: 3}
   stageSize: 3
 --- !u!114 &1788678294
