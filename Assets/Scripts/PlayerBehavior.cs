@@ -6,11 +6,6 @@ public class PlayerBehavior : MonoBehaviour
 {
     [SerializeField] private float movementSpeed = 3f;
 
-    void Start()
-    {
-        
-    }
-
     public void MoveToPosition(Vector2 targetPosition)
     {
         StopAllCoroutines(); 

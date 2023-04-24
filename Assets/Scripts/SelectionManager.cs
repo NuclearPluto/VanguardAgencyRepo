@@ -12,6 +12,7 @@ public class SelectionManager : MonoBehaviour
     private InputAction endSelection;
     private InputAction moveToPosition;
     private bool isUpdatingSelection = false;
+    StageGeneration stage;
 
     private void Awake()
     {
@@ -26,6 +27,10 @@ public class SelectionManager : MonoBehaviour
         //Debug.Log(updateSelection);
         moveToPosition = inputActions.FindAction("MoveToPosition");
         //Debug.Log(moveToPosition);
+    }
+
+    private void Start() {
+        stage = gameObject.GetComponent<StageGeneration>();
     }
 
     private void OnEnable()
@@ -71,7 +76,6 @@ public class SelectionManager : MonoBehaviour
         startPosition = GetMouseWorldPosition();
 
         //Debug.Log("Number of rooms is " + gameObject.GetComponent<StageGeneration>().getListRooms().Count);
-        StageGeneration stage = gameObject.GetComponent<StageGeneration>();
         List<Room> roomList = stage.getListRooms();
         LookupMap lookupMap = stage.getLookupMap();
         int index = lookupMap.getIndexAt(startPosition);
@@ -151,9 +155,13 @@ public class SelectionManager : MonoBehaviour
 
     private void OnMoveToPosition(InputAction.CallbackContext context)
     {
-        Debug.Log($"World position to move to is {GetMouseWorldPosition()}");
+        //Debug.Log($"World position to move to is {GetMouseWorldPosition()}");
+        float tempCellWidth = stage.getCellWidth();
+        Vector3 tempPosition = GetMouseWorldPosition();
+        tempPosition.y = tempCellWidth * (float)System.Math.Floor((tempPosition.y + tempCellWidth / 2) / tempCellWidth);
+        Debug.Log($"World position to move to is {tempPosition}");
         foreach(GameObject selectedUnit in selectedUnits) {
-            selectedUnit.GetComponent<PlayerBehavior>().MoveToPosition(GetMouseWorldPosition());
+            selectedUnit.GetComponent<PlayerBehavior>().MoveToPosition(tempPosition);
         }
     }
 

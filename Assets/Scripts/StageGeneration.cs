@@ -162,4 +162,8 @@ public class StageGeneration : MonoBehaviour
         createdCells.Add(platformCellHallwayInstance);
         createdCells.Add(platformCellRightInstance);
     }
+
+    public float getCellWidth() {
+        return cellWidth;
+    }
 }
