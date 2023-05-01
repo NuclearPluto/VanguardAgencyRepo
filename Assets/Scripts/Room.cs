@@ -186,4 +186,8 @@ public class Room : MonoBehaviour
         };
         return returnDimensions;
     }
+
+    public float getEdgeWeight(Room room) {
+        return 0;
+    }
 }

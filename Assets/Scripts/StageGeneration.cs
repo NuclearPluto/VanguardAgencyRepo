@@ -14,6 +14,7 @@ public class StageGeneration : MonoBehaviour
     public GameObject platformCellRight;
     public GameObject door;
     public GameObject DebugCircle;
+    public GameObject PlayerPrefab;
     //stageSize - 1 = small - 2 = medium - 3 = large
     public int stageSize = 3;
     //public bool debugToggle = false;
@@ -21,6 +22,7 @@ public class StageGeneration : MonoBehaviour
     private List<Room> listRooms;
     private Platform platformControl;
     private LookupMap lookupMap;
+    private Dijekstras pathfinding;
     private Vector3 createPosition;
     private float cellWidth;
     private int numRooms = 0;
@@ -36,8 +38,13 @@ public class StageGeneration : MonoBehaviour
     {
         lookupMap = new LookupMap(cellWidth);
         createStage(stageSize);
-        lookupMap.printMap();
+        pathfinding = new Dijekstras(lookupMap, listRooms);
+        createPlayer();
         debugClosed();
+    }
+
+    public void createPlayer() {
+        Instantiate(PlayerPrefab, new Vector3(0, 0, 0), Quaternion.identity);
     }
 
     public void createStage(int type) {
@@ -86,7 +93,7 @@ public class StageGeneration : MonoBehaviour
         }
     }
 
-    public Room createPlatform(int type) {
+    private Room createPlatform(int type) {
         createPosition = platformControl.getPosition();
         Vector2Int roomDimensions = getDimensionsFromPlatformType(type);
         if (lookupMap.isValidPosition(createPosition, roomDimensions)) {
@@ -140,6 +147,10 @@ public class StageGeneration : MonoBehaviour
 
     public LookupMap getLookupMap() {
         return lookupMap;
+    }
+
+    public Dijekstras getPathfinding() {
+        return pathfinding;
     }
 
     private void HandleType1(Vector3 createPosition, List<GameObject> createdCells) {
