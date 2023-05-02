@@ -103,6 +103,7 @@ public class Dijekstras
         }
         else
         {
+            path.Add(startRoom);
             //Debug.LogError("GetShortestPath: Start or end room not found in the shortestPaths dictionary.");
         }
 

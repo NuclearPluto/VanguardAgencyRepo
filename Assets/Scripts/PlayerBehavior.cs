@@ -35,7 +35,8 @@ public class PlayerBehavior : MonoBehaviour
 
     private IEnumerator MoveToPositionCoroutine(List<Room> path, Vector2 goToPosition)
     {
-        if (path.Count <= 1) {
+        if (path.Count == 0) {}
+        else if (path.Count == 1) {
             Vector2 targetPosition = goToPosition;
             while (Vector2.Distance(transform.position, targetPosition) > 0.01f)
             {
