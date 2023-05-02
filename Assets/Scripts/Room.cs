@@ -93,6 +93,7 @@ public class Room : MonoBehaviour
                 }
                 else if (leftPosition.absUnitDistance(tempLeftPosition).x < leftPosition.absUnitDistance(tempRightPosition).x) {
                     leftPosition.connectDoor(tempLeftPosition);
+                    //leftPosition.connectDoor(tempRightPosition);
                 }
                 else {
                     leftPosition.connectDoor(tempRightPosition);
@@ -109,6 +110,7 @@ public class Room : MonoBehaviour
                 }
                 else {
                     rightPosition.connectDoor(tempRightPosition);
+                    //rightPosition.connectDoor(tempLeftPosition);
                 }
             }
             else {
@@ -195,11 +197,11 @@ public class Room : MonoBehaviour
     //returns 2 rooms in list if both doors are connected
     public List<Door> getConnectedDoor(Room room) {
         List<Door> returnList = new List<Door>();
-        if (leftPosition.isConnected(room)) {
-            returnList.Add(leftPosition);
+        if (leftPosition.getConnectedDoor(room) != null) {
+            returnList.Add(leftPosition.getConnectedDoor(room));
         }
-        if (rightPosition.isConnected(room)) {
-            returnList.Add(rightPosition);
+        if (rightPosition.getConnectedDoor(room) != null) {
+            returnList.Add(rightPosition.getConnectedDoor(room));
         }
 
         return returnList; 

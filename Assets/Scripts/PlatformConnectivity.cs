@@ -48,13 +48,13 @@ public class Platform
         foreach (Vector2Int tempPosition in tempPositions) {
             if (openPositions.Contains(tempPosition) || closedPositions.Contains(tempPosition)) {
                 int index = lookupMap.getIndexAt(unitsToWorld(tempPosition));
-                if (closedPositions.Contains(tempPosition) && !listRooms[index].isRoomConnected(currentRoom)) {
-                    if (!listRooms[index].isRoomConnected(currentRoom)) {
+                if (closedPositions.Contains(tempPosition) && !listRooms[index].isRoomConnected(currentRoom) && !currentRoom.isRoomConnected(listRooms[index])) {
+                    //if (!listRooms[index].isRoomConnected(currentRoom)) {
                         listRooms[index].connectRoom(currentRoom);
-                    }
-                    if (!currentRoom.isRoomConnected(listRooms[index])) {
+                    //}
+                    //if (!currentRoom.isRoomConnected(listRooms[index])) {
                         currentRoom.connectRoom(listRooms[index]);
-                    }
+                    //}
                 }
             }
             else {

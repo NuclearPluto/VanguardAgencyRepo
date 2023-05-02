@@ -48,8 +48,11 @@ public class PlayerBehavior : MonoBehaviour
             Vector2 targetPosition = new Vector2(0, 0);
             Door doorToOpen = null;
             if (path[0].getConnectedDoor(path[1]).Count == 1) {
-                doorToOpen = path[1].getConnectedDoor(path[0])[0];
-                targetPosition = path[0].getConnectedDoor(path[1])[0].getPosition();
+                doorToOpen = path[0].getConnectedDoor(path[1])[0];
+                //Debug.Log("The door to teleport to is a " + doorToOpen.getOrientation());
+                targetPosition = path[1].getConnectedDoor(path[0])[0].getPosition();
+                //Debug.Log("The door to go to is a " + path[0].getConnectedDoor(path[1])[0].getOrientation());
+                //Debug.Log("The connected door position from " + targetPosition + " needs to go to " + doorToOpen.getPosition());
             } 
             else if (path[0].getConnectedDoor(path[1]).Count == 2) {
                 List<Door> connectedDoors = path[0].getConnectedDoor(path[1]);

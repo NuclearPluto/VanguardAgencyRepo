@@ -55,12 +55,30 @@ public class Door
 
     public void debugPrintCurrent() {
         Debug.Log("Door position at " + this.unitPosition.x + ", " + this.unitPosition.y);
+        //Debug.Log("Door position at " + this.position.x + ", " + this.position.y);
+    }
+
+    public string getOrientation() {
+        return orientation;
     }
 
     public bool isConnected(Room room) {
         if (connectedDoors.Contains(room.getLeftDoor()) || connectedDoors.Contains(room.getRightDoor())) {
             return true;
         } else return false;
+    }
+
+    public Door getConnectedDoor(Room room) {
+        if (connectedDoors.Contains(room.getLeftDoor())) {
+            return room.getLeftDoor();
+        }
+        else if (connectedDoors.Contains(room.getRightDoor())) {
+            return room.getRightDoor();
+        }
+        else {
+            return null;
+            //Debug.LogError("The door at " + position + "is not connected to room at " + room.getPivot());
+        }
     }
 
 }
