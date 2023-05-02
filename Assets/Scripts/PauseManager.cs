@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 
 public class PauseManager : MonoBehaviour
 {
+    [SerializeField] public UnityEngine.UI.Image pauseOverlay;
     private InputAction pausePress;
     private bool isPaused = false;
     // Start is called before the first frame update
@@ -26,6 +27,7 @@ public class PauseManager : MonoBehaviour
 
     private void OnTogglePause(InputAction.CallbackContext context) {
         isPaused = !isPaused;
+        pauseOverlay.gameObject.SetActive(isPaused);
         if (isPaused)
             Time.timeScale = 0;
             else Time.timeScale = 1;

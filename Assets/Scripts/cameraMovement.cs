@@ -34,7 +34,7 @@ public class cameraMovement : MonoBehaviour
         {
             Vector3 direction = new Vector3(horizontal, vertical, 0f);
             direction.Normalize();
-            transform.position += direction * moveSpeed * Time.deltaTime;
+            transform.position += direction * moveSpeed * Time.unscaledDeltaTime;
         }
 
         float scroll = Input.GetAxis("Mouse ScrollWheel");

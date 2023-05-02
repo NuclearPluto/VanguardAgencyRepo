@@ -55,16 +55,16 @@ public class PlayerBehavior : MonoBehaviour
                 //Debug.Log("The connected door position from " + targetPosition + " needs to go to " + doorToOpen.getPosition());
             } 
             else if (path[0].getConnectedDoor(path[1]).Count == 2) {
-                List<Door> connectedDoors = path[0].getConnectedDoor(path[1]);
-                float distance0 = connectedDoors[0].getDistanceFrom(transform.position);
-                float distance1 = connectedDoors[1].getDistanceFrom(transform.position);
+                List<Door> connectedDoors = path[1].getConnectedDoor(path[0]);
+                float distance0 = connectedDoors[1].getDistanceFrom(transform.position);
+                float distance1 = connectedDoors[0].getDistanceFrom(transform.position);
                 if (distance0 < distance1) {
-                    doorToOpen = path[1].getConnectedDoor(path[0])[0];
-                    targetPosition = connectedDoors[0].getPosition();
+                    doorToOpen = path[0].getConnectedDoor(path[1])[1];
+                    targetPosition = connectedDoors[1].getPosition();
                 }
                 else {
-                    doorToOpen = path[1].getConnectedDoor(path[0])[1];
-                    targetPosition = connectedDoors[1].getPosition();
+                    doorToOpen = path[0].getConnectedDoor(path[1])[0];
+                    targetPosition = connectedDoors[0].getPosition();
                 }
             }
             while (Vector2.Distance(transform.position, targetPosition) > 0.01f)
