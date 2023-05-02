@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 
 public class PauseManager : MonoBehaviour
 {
-    [SerializeField] public UnityEngine.UI.Image pauseOverlay;
+    [SerializeField] public UnityEngine.Canvas pauseOverlay;
     private InputAction pausePress;
     private bool isPaused = false;
     // Start is called before the first frame update
