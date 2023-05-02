@@ -82,7 +82,7 @@ public class Dijekstras
         if (startIndex == -1 || endIndex == -1) {
             return path;
         }
-        
+
         Room startRoom = listRooms[startIndex];
         Room endRoom = listRooms[endIndex];;
 
@@ -98,15 +98,12 @@ public class Dijekstras
                 currentRoom = shortestPaths[startRoom][currentRoom];
             }
 
-            // Add the startRoom to the path
             path.Add(startRoom);
-
-            // Reverse the path to have it in the correct order from startRoom to endRoom
             path.Reverse();
         }
         else
         {
-            Debug.LogError("GetShortestPath: Start or end room not found in the shortestPaths dictionary.");
+            //Debug.LogError("GetShortestPath: Start or end room not found in the shortestPaths dictionary.");
         }
 
         return path;

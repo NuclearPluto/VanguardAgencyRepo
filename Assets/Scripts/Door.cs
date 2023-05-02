@@ -7,8 +7,15 @@ public class Door
     private Vector2 position;
     private Vector2Int unitPosition;
     private List<Door> connectedDoors;
-    public Door (Vector2 position, Vector2Int unitPosition){
-        this.position = position;
+    private string orientation;
+    public Door (Vector2 position, Vector2Int unitPosition, string orientation){
+        this.orientation = orientation;
+        if (orientation == "left") {
+            this.position = new Vector2(position.x + 0.01f, position.y);
+        }
+        else {
+            this.position = new Vector2(position.x - 0.01f, position.y);
+        }
         this.unitPosition = unitPosition;
         connectedDoors = new List<Door>();
     }
@@ -35,6 +42,10 @@ public class Door
         this.connectedDoors.Add(door);
     }
 
+    public float getDistanceFrom(Vector2 point) {
+        return Math.Abs(position.x - point.x);
+    }
+
     public void debugPrint() {
         Debug.Log("The connected doors at position " + unitPosition + " are:");
         foreach (Door door in connectedDoors) {
@@ -45,4 +56,11 @@ public class Door
     public void debugPrintCurrent() {
         Debug.Log("Door position at " + this.unitPosition.x + ", " + this.unitPosition.y);
     }
+
+    public bool isConnected(Room room) {
+        if (connectedDoors.Contains(room.getLeftDoor()) || connectedDoors.Contains(room.getRightDoor())) {
+            return true;
+        } else return false;
+    }
+
 }

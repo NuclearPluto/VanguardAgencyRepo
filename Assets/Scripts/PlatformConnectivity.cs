@@ -49,8 +49,12 @@ public class Platform
             if (openPositions.Contains(tempPosition) || closedPositions.Contains(tempPosition)) {
                 int index = lookupMap.getIndexAt(unitsToWorld(tempPosition));
                 if (closedPositions.Contains(tempPosition) && !listRooms[index].isRoomConnected(currentRoom)) {
-                    listRooms[index].connectRoom(currentRoom);
-                    currentRoom.connectRoom(listRooms[index]);
+                    if (!listRooms[index].isRoomConnected(currentRoom)) {
+                        listRooms[index].connectRoom(currentRoom);
+                    }
+                    if (!currentRoom.isRoomConnected(listRooms[index])) {
+                        currentRoom.connectRoom(listRooms[index]);
+                    }
                 }
             }
             else {

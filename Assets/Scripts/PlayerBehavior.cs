@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class PlayerBehavior : MonoBehaviour
 {
-    [SerializeField] private float movementSpeed = 3f;
-    Dijekstras pathfinding;
+    private float movementSpeed = 5f;
+    private float doorOpenSpeed = 0.5f; //time in seconds to open
+    private Dijekstras pathfinding;
 
     void Start()
     {
@@ -25,22 +26,62 @@ public class PlayerBehavior : MonoBehaviour
     public void MoveToPosition(Vector2 targetPosition)
     {
         StopAllCoroutines(); 
-        List<Room> testing = pathfinding.GetShortestPath(transform.position, targetPosition);
-        foreach (Room room in testing) {
+        List<Room> path = pathfinding.GetShortestPath(transform.position, targetPosition);
+        foreach (Room room in path) {
             Debug.Log("The room pivot is " + room.getUnitPivot());
         }
-        StartCoroutine(MoveToPositionCoroutine(targetPosition));
+        StartCoroutine(MoveToPositionCoroutine(path, targetPosition));
     }
 
-    private IEnumerator MoveToPositionCoroutine(Vector2 targetPosition)
+    private IEnumerator MoveToPositionCoroutine(List<Room> path, Vector2 goToPosition)
     {
-        while (Vector2.Distance(transform.position, targetPosition) > 0.01f)
-        {
-            transform.position = Vector2.MoveTowards(transform.position, targetPosition, movementSpeed * Time.deltaTime);
-            yield return null;
+        if (path.Count <= 1) {
+            Vector2 targetPosition = goToPosition;
+            while (Vector2.Distance(transform.position, targetPosition) > 0.01f)
+            {
+                transform.position = Vector2.MoveTowards(transform.position, targetPosition, movementSpeed * Time.deltaTime);
+                yield return null;
+            }
         }
+        else {
+            Vector2 targetPosition = new Vector2(0, 0);
+            Door doorToOpen = null;
+            if (path[0].getConnectedDoor(path[1]).Count == 1) {
+                doorToOpen = path[1].getConnectedDoor(path[0])[0];
+                targetPosition = path[0].getConnectedDoor(path[1])[0].getPosition();
+            } 
+            else if (path[0].getConnectedDoor(path[1]).Count == 2) {
+                List<Door> connectedDoors = path[0].getConnectedDoor(path[1]);
+                float distance0 = connectedDoors[0].getDistanceFrom(transform.position);
+                float distance1 = connectedDoors[1].getDistanceFrom(transform.position);
+                if (distance0 < distance1) {
+                    doorToOpen = path[1].getConnectedDoor(path[0])[0];
+                    targetPosition = connectedDoors[0].getPosition();
+                }
+                else {
+                    doorToOpen = path[1].getConnectedDoor(path[0])[1];
+                    targetPosition = connectedDoors[1].getPosition();
+                }
+            }
+            while (Vector2.Distance(transform.position, targetPosition) > 0.01f)
+            {
+                transform.position = Vector2.MoveTowards(transform.position, targetPosition, movementSpeed * Time.deltaTime);
+                yield return null;
+            }
+            // Snap to the target position when close enough
+            transform.position = targetPosition;
 
-        // Snap to the target position when close enough
-        transform.position = targetPosition;
+            yield return StartCoroutine(PassToDoorCoroutine(doorToOpen));
+            path.RemoveAt(0);
+            yield return StartCoroutine(MoveToPositionCoroutine(path, goToPosition));
+        }
+    }
+
+    private IEnumerator PassToDoorCoroutine(Door door) {
+        yield return new WaitForSeconds(doorOpenSpeed);
+
+
+        transform.position = door.getPosition();
+        Debug.Log("passed through door and went to " + door.getPosition());
     }
 }

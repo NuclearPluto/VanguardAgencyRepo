@@ -45,8 +45,8 @@ public class Room : MonoBehaviour
     public void setDoors() {
         Vector2 tempLeftPosition = new Vector2(roomPivot.x - cellWidth/2, roomPivot.y);
         Vector2 tempRightPosition = new Vector2(roomPivot.x - cellWidth/2 + roomDimensions.x, roomPivot.y);
-        leftPosition = new Door(tempLeftPosition, worldToUnit(new Vector2(roomPivot.x, roomPivot.y)));
-        rightPosition = new Door(tempRightPosition, worldToUnit(new Vector2(roomPivot.x + roomDimensions.x, roomPivot.y)));
+        leftPosition = new Door(tempLeftPosition, worldToUnit(new Vector2(roomPivot.x, roomPivot.y)), "left");
+        rightPosition = new Door(tempRightPosition, worldToUnit(new Vector2(roomPivot.x + roomDimensions.x, roomPivot.y)), "right");
     }
 
     public void connectRoom(Room room) {
@@ -187,7 +187,21 @@ public class Room : MonoBehaviour
         return returnDimensions;
     }
 
+    //TODO: CHANGE FOR WHEN ITS TIME TO REFACTOR FROM DIJEKSTRA'S TO DYNAMIC PROGRAMMING + A* SEARCH
     public float getEdgeWeight(Room room) {
-        return 0;
+        return 1;
+    }
+
+    //returns 2 rooms in list if both doors are connected
+    public List<Door> getConnectedDoor(Room room) {
+        List<Door> returnList = new List<Door>();
+        if (leftPosition.isConnected(room)) {
+            returnList.Add(leftPosition);
+        }
+        if (rightPosition.isConnected(room)) {
+            returnList.Add(rightPosition);
+        }
+
+        return returnList; 
     }
 }
