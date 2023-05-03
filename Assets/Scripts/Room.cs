@@ -36,6 +36,10 @@ public class Room : MonoBehaviour
         fogOfWarInstance.GetComponent<SpriteRenderer>().color = new Color(0f, 0f, 0f, 0.5f);
     }
 
+    public bool isFog() {
+        return isFogToggle;
+    }
+
     public void addEntity(EntityBehavior entity) {
         entitiesInRoom.Add(entity);
     }

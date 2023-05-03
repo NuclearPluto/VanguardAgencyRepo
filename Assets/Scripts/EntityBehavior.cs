@@ -9,7 +9,6 @@ public class EntityBehavior : MonoBehaviour
     [SerializeField] protected float doorOpenSpeed = 0.5f; //time in seconds to open
     protected Dijekstras pathfinding;
     protected Room currentRoom;
-    protected MapStateManager mapState;
 
     protected virtual void Start()
     {
@@ -18,10 +17,9 @@ public class EntityBehavior : MonoBehaviour
         if (directorObject != null)
         {
             pathfinding = directorObject.GetComponent<StageGeneration>().getPathfinding();
-            mapState = directorObject.GetComponent<MapStateManager>();
             currentRoom = pathfinding.GetCurrentRoom(transform.position);
             currentRoom.addEntity(this);
-            mapState.addEntity(this);
+            GameEvents.current.EntityAdded(this);
         }
         else
         {
@@ -29,7 +27,7 @@ public class EntityBehavior : MonoBehaviour
         }
     }
 
-    public void MoveToPosition(Vector2 targetPosition)
+    public virtual void MoveToPosition(Vector2 targetPosition)
     {
         StopAllCoroutines(); 
         List<Room> path = pathfinding.GetShortestPath(transform.position, targetPosition);
@@ -39,7 +37,7 @@ public class EntityBehavior : MonoBehaviour
         StartCoroutine(MoveToPositionCoroutine(path, targetPosition));
     }
 
-    private IEnumerator MoveToPositionCoroutine(List<Room> path, Vector2 goToPosition)
+    protected virtual IEnumerator MoveToPositionCoroutine(List<Room> path, Vector2 goToPosition)
     {
         if (path.Count == 0) {}
         else if (path.Count == 1) {
@@ -111,7 +109,7 @@ public class EntityBehavior : MonoBehaviour
     }
 
     protected virtual void Die() {
-        mapState.removeEntity(this);
+        GameEvents.current.EntityDied(this);
         Destroy(this);
     }
 }

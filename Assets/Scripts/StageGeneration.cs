@@ -15,6 +15,7 @@ public class StageGeneration : MonoBehaviour
     public GameObject door;
     public GameObject DebugCircle;
     public GameObject PlayerPrefab;
+    public GameObject tutorialEnemyPrefab;
     //stageSize - 1 = small - 2 = medium - 3 = large
     public int stageSize = 3;
     //public bool debugToggle = false;
@@ -40,11 +41,16 @@ public class StageGeneration : MonoBehaviour
         createStage(stageSize);
         pathfinding = new Dijekstras(lookupMap, listRooms);
         createPlayer();
+        createEnemy();
         debugClosed();
     }
 
     public void createPlayer() {
         Instantiate(PlayerPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+    }
+
+    public void createEnemy() {
+        Instantiate(tutorialEnemyPrefab, new Vector3(0, 0, 0), Quaternion.identity);
     }
 
     public void createStage(int type) {

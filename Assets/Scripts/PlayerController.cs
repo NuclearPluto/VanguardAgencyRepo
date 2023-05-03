@@ -19,6 +19,7 @@ public class PlayerController : EntityBehavior
         toggleVision();
         base.EnterRoom(room);
         toggleVision();
+        GameEvents.current.PlayerEnteredRoom();
     }
 
     public void toggleVision() {
