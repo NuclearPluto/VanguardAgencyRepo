@@ -8,6 +8,10 @@ public class Room : MonoBehaviour
     private const int MAX_ROOM_X_LENGTH = 3;
     private const int MAX_ROOM_Y_LENGTH = 2;
 
+    public GameObject fogOfWarPrefab;
+
+    private bool isFogToggle = true;
+    private GameObject fogOfWarInstance;
     private int roomID;
     private Vector2 roomPivot;
     private List<Room> connectedRooms;
@@ -17,10 +21,53 @@ public class Room : MonoBehaviour
     private Vector2Int unitDimensions;
     private Door leftPosition;
     private Door rightPosition;
+    private List<EntityBehavior> entitiesInRoom;
     // Start is called before the first frame update
     void Awake() {
         connectedRooms = new List<Room>();
         connectedRoomsHash = new HashSet<Room>();
+        entitiesInRoom = new List<EntityBehavior>();
+    }
+
+    void Start() {
+        fogOfWarInstance = Instantiate(fogOfWarPrefab, getCenter(), Quaternion.identity);
+        fogOfWarInstance.transform.SetParent(transform);
+        fogOfWarInstance.transform.localScale = new Vector3(roomDimensions.x, roomDimensions.y, 0);
+        fogOfWarInstance.GetComponent<SpriteRenderer>().color = new Color(0f, 0f, 0f, 0.5f);
+    }
+
+    public void addEntity(EntityBehavior entity) {
+        entitiesInRoom.Add(entity);
+    }
+
+    public void removeEntity(EntityBehavior entity) {
+        entitiesInRoom.Remove(entity);
+    }
+
+    public List<EntityBehavior> getEntities() {
+        return entitiesInRoom;
+    }
+
+    public void toggleFog() {
+        isFogToggle = !isFogToggle;
+        if (isFogToggle) {
+            fogOfWarInstance.SetActive(true);
+        } 
+        else {
+            fogOfWarInstance.SetActive(false);
+        }
+    }
+
+    public void toggleNeighborFog() {
+        foreach (Room room in connectedRooms) {
+            room.toggleFog();
+        }
+    }
+
+    public Vector2 getCenter() {
+        Vector2 halfDimension = new Vector2(roomDimensions.x/2, 0);
+        Vector2 returnCenter = halfDimension + leftPosition.getPosition();
+        return returnCenter;
     }
 
     public void setID(int given) {
@@ -45,8 +92,8 @@ public class Room : MonoBehaviour
     public void setDoors() {
         Vector2 tempLeftPosition = new Vector2(roomPivot.x - cellWidth/2, roomPivot.y);
         Vector2 tempRightPosition = new Vector2(roomPivot.x - cellWidth/2 + roomDimensions.x, roomPivot.y);
-        leftPosition = new Door(tempLeftPosition, worldToUnit(new Vector2(roomPivot.x, roomPivot.y)), "left");
-        rightPosition = new Door(tempRightPosition, worldToUnit(new Vector2(roomPivot.x + roomDimensions.x, roomPivot.y)), "right");
+        leftPosition = new Door(tempLeftPosition, worldToUnit(new Vector2(roomPivot.x, roomPivot.y)), "left", this);
+        rightPosition = new Door(tempRightPosition, worldToUnit(new Vector2(roomPivot.x + roomDimensions.x, roomPivot.y)), "right", this);
     }
 
     public void connectRoom(Room room) {

@@ -8,7 +8,9 @@ public class Door
     private Vector2Int unitPosition;
     private List<Door> connectedDoors;
     private string orientation;
-    public Door (Vector2 position, Vector2Int unitPosition, string orientation){
+    private Room attachedRoom;
+    public Door (Vector2 position, Vector2Int unitPosition, string orientation, Room room){
+        attachedRoom = room;
         this.orientation = orientation;
         if (orientation == "left") {
             this.position = new Vector2(position.x + 0.01f, position.y);
@@ -18,6 +20,10 @@ public class Door
         }
         this.unitPosition = unitPosition;
         connectedDoors = new List<Door>();
+    }
+
+    public Room getAttachedRoom() {
+        return attachedRoom;
     }
 
     public Vector2Int unitDistance(Door door) {

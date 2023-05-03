@@ -129,7 +129,7 @@ public class StageGeneration : MonoBehaviour
                 Debug.Log("ERROR! PLATFORM TYPE NOT DEFINED YET.");
                 break;
         }
-
+        
         foreach (GameObject cell in createdCells) {
             cell.transform.SetParent(roomInstance.transform, true);
         }

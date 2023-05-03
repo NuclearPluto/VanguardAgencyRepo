@@ -2,20 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerBehavior : MonoBehaviour
+public class EntityBehavior : MonoBehaviour
 {
-    private float movementSpeed = 5f;
-    private float doorOpenSpeed = 0.5f; //time in seconds to open
-    private Dijekstras pathfinding;
+    [SerializeField] protected float health = 10f;
+    [SerializeField] protected float movementSpeed = 5f;
+    [SerializeField] protected float doorOpenSpeed = 0.5f; //time in seconds to open
+    protected Dijekstras pathfinding;
+    protected Room currentRoom;
+    protected MapStateManager mapState;
 
-    void Start()
+    protected virtual void Start()
     {
         GameObject directorObject = GameObject.FindGameObjectWithTag("Director");
 
         if (directorObject != null)
         {
-            Debug.Log(directorObject.GetComponent<StageGeneration>().getListRooms().Count);
             pathfinding = directorObject.GetComponent<StageGeneration>().getPathfinding();
+            mapState = directorObject.GetComponent<MapStateManager>();
+            currentRoom = pathfinding.GetCurrentRoom(transform.position);
+            currentRoom.addEntity(this);
+            mapState.addEntity(this);
         }
         else
         {
@@ -81,11 +87,31 @@ public class PlayerBehavior : MonoBehaviour
         }
     }
 
-    private IEnumerator PassToDoorCoroutine(Door door) {
+    protected virtual IEnumerator PassToDoorCoroutine(Door door) {
         yield return new WaitForSeconds(doorOpenSpeed);
 
-
         transform.position = door.getPosition();
+        EnterRoom(door.getAttachedRoom());
+
         Debug.Log("passed through door and went to " + door.getPosition());
+        
+    }
+
+    protected virtual void EnterRoom(Room room) {
+        currentRoom.removeEntity(this);
+        room.addEntity(this);
+        currentRoom = room;
+    }
+
+    public virtual void TakeDamage(float damage) {
+        health -= damage;
+        if (health <= 0) {
+            Die();
+        }
+    }
+
+    protected virtual void Die() {
+        mapState.removeEntity(this);
+        Destroy(this);
     }
 }

@@ -161,7 +161,7 @@ public class SelectionManager : MonoBehaviour
         tempPosition.y = tempCellWidth * (float)System.Math.Floor((tempPosition.y + tempCellWidth / 2) / tempCellWidth);
         Debug.Log($"World position to move to is {tempPosition}");
         foreach(GameObject selectedUnit in selectedUnits) {
-            selectedUnit.GetComponent<PlayerBehavior>().MoveToPosition(tempPosition);
+            selectedUnit.GetComponent<PlayerController>().MoveToPosition(tempPosition);
         }
     }
 

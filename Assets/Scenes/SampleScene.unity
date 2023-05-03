@@ -1008,6 +1008,8 @@ GameObject:
   - component: {fileID: 1788678293}
   - component: {fileID: 1788678294}
   - component: {fileID: 1788678295}
+  - component: {fileID: 1788678296}
+  - component: {fileID: 1788678297}
   m_Layer: 0
   m_Name: Director
   m_TagString: Director
@@ -1078,6 +1080,30 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pauseOverlay: {fileID: 451526752}
+--- !u!114 &1788678296
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1788678291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd72d4196c51f7b48b118a5033de415a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1788678297
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1788678291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aee481d3ca3faa847aef743d365d9a2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1988684333
 GameObject:
   m_ObjectHideFlags: 0

@@ -110,5 +110,10 @@ public class Dijekstras
         return path;
     }
 
+    public Room GetCurrentRoom(Vector2 position) {
+        int index = lookupMap.getIndexAt(position);
+        return listRooms[index];
+    }
+
 
 }

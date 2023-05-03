@@ -8,7 +8,7 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 3419401636637142915}
+  - component: {fileID: 1245667421159458582}
   - component: {fileID: 5632860015934245339}
   m_Layer: 0
   m_Name: Room
@@ -17,7 +17,7 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &3419401636637142915
+--- !u!4 &1245667421159458582
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -44,3 +44,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29a96b7710398434fa146a553657a96e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fogOfWarPrefab: {fileID: 618202745127365617, guid: 08b406433226c0e44b4dbb30f97198e8, type: 3}
