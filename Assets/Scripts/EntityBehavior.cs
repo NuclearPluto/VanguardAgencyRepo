@@ -52,7 +52,9 @@ public class EntityBehavior : MonoBehaviour
             MoveToPosition(targetPosition);
         }
         if (animationInProgress) {
+            Debug.Log("animation is in progress, so wait....");
             StartCoroutine(waitForAnimation(targetPosition));
+            Debug.Log("now go");
             return;
         }
         StopAllCoroutines(); 
@@ -182,6 +184,9 @@ public class EntityBehavior : MonoBehaviour
             }
             else
             {
+                if (IsEntityDestroyed(entity)) {
+                    continue;
+                }
                 movementCoroutine = StartCoroutine(helperFunc(entity.transform.position));
                 while (movementCoroutine != null && Vector2.Distance(transform.position, entity.transform.position) > attackRange) {
                     yield return null;

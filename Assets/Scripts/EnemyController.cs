@@ -7,6 +7,7 @@ public class EnemyController : EntityBehavior
 
     protected override void Start() {
         base.Start();
+        CheckWakeup();
     }
 
     // protected override IEnumerator PassToDoorCoroutine(Door door) {

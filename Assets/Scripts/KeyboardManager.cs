@@ -55,8 +55,15 @@ public class KeyboardManager : MonoBehaviour
 
     public void OnToggleEscape(InputAction.CallbackContext context) {
         isEscaped = !isEscaped;
-        isPaused = true;
-        Time.timeScale = 0;
+        if (isEscaped) {
+            Time.timeScale = 0;
+        }
+        else if (isPaused) {
+
+        }
+        else {
+            Time.timeScale = 1;
+        }
 
         if (isEscaped) {
             escapeOverlay.gameObject.SetActive(isEscaped);

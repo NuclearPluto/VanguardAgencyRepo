@@ -42,6 +42,7 @@ public class DialogueController : MonoBehaviour
         dialogueKeys.Add("At least it's refactored to be a lot more maintainable now.");
         dialogueKeys.Add("Anyways, remember that you can select me (or any playable character if those were implemented) by dragging and releasing the left mouse button.");
         dialogueKeys.Add("And of course, you can tell me where to go using right mouse click while I'm selected.");
+        dialogueKeys.Add("I'd like to mention that the slight delay before entering to another room is not lag, but it's a delay based on the character's door opening speed.");
         dialogueKeys.Add("Perhaps you've noticed already, but there's a sort of fog of war visible on the map.");
         dialogueKeys.Add("Player characters have a vision range that affects the amount of visible rooms around them.");
         dialogueKeys.Add("As demonstrated, I should be able to see a decent amount farther away now.");
