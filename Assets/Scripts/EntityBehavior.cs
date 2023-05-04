@@ -131,7 +131,7 @@ public class EntityBehavior : MonoBehaviour
 
     public virtual void TakeDamage(float damage) {
         health -= damage;
-        StartCoroutine(ShakeAnimation(transform, 0.1f, 0.05f));
+        StartCoroutine(ShakeAnimation(transform));
         if (health <= 0) {
             Die();
         }
@@ -248,7 +248,7 @@ public class EntityBehavior : MonoBehaviour
     }
 
 
-    private IEnumerator ShakeAnimation(Transform target, float duration, float magnitude)
+    private IEnumerator ShakeAnimation(Transform target, float duration = 0.1f, float magnitude = 0.1f)
     {
         animationInProgress = true;
 

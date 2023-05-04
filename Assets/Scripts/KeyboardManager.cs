@@ -28,7 +28,6 @@ public class KeyboardManager : MonoBehaviour
         pausePress.performed += OnEnablePauseOverlay;
 
         escapePress.Enable();
-        escapePress.performed += OnTogglePause;
         escapePress.performed += OnToggleEscape;
     }
 
@@ -56,6 +55,8 @@ public class KeyboardManager : MonoBehaviour
 
     public void OnToggleEscape(InputAction.CallbackContext context) {
         isEscaped = !isEscaped;
+        isPaused = true;
+        Time.timeScale = 0;
 
         if (isEscaped) {
             escapeOverlay.gameObject.SetActive(isEscaped);

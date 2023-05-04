@@ -142,7 +142,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &77557423
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1684,6 +1684,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   onEntityAdded:
+    m_PersistentCalls:
+      m_Calls: []
+  onPlayerVisionChange:
     m_PersistentCalls:
       m_Calls: []
 --- !u!4 &1451004888

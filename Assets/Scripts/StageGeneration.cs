@@ -50,7 +50,8 @@ public class StageGeneration : MonoBehaviour
     }
 
     public void createEnemy() {
-        Instantiate(tutorialEnemyPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+        int randomInt = Random.Range(0, listRooms.Count);
+        Instantiate(tutorialEnemyPrefab, listRooms[randomInt].getPivot(), Quaternion.identity);
     }
 
     public void createStage(int type) {
