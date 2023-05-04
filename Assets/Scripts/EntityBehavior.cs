@@ -4,11 +4,19 @@ using UnityEngine;
 
 public class EntityBehavior : MonoBehaviour
 {
-    [SerializeField] protected float health = 10f;
-    [SerializeField] protected float movementSpeed = 5f;
-    [SerializeField] protected float doorOpenSpeed = 0.5f; //time in seconds to open
+    protected float health = 10f;
+    protected float movementSpeed = 5f;
+    protected float doorOpenSpeed = 0.5f; //time in seconds to open
+    protected float attackRange = 0.1f;
+    protected float attackSpeed = 1.0f;
+    protected float attackDamage = 2.0f;
     protected Dijekstras pathfinding;
     protected Room currentRoom;
+    protected bool animationInProgress = false;
+    protected bool currentlyWaiting = false;
+
+    protected Coroutine movementCoroutine;
+    protected Coroutine currentCoroutine;
 
     protected virtual void Start()
     {
@@ -29,12 +37,30 @@ public class EntityBehavior : MonoBehaviour
 
     public virtual void MoveToPosition(Vector2 targetPosition)
     {
+        IEnumerator waitForAnimation(Vector2 targetPosition) {
+            if (!currentlyWaiting) {
+                currentlyWaiting = true;
+            }
+            else {
+                yield break;
+            }
+            while (animationInProgress) {
+                //spinlock baby
+                yield return null;
+            }
+            currentlyWaiting = false;
+            MoveToPosition(targetPosition);
+        }
+        if (animationInProgress) {
+            StartCoroutine(waitForAnimation(targetPosition));
+            return;
+        }
         StopAllCoroutines(); 
         List<Room> path = pathfinding.GetShortestPath(transform.position, targetPosition);
         foreach (Room room in path) {
             Debug.Log("The room pivot is " + room.getUnitPivot());
         }
-        StartCoroutine(MoveToPositionCoroutine(path, targetPosition));
+        movementCoroutine = StartCoroutine(MoveToPositionCoroutine(path, targetPosition));     
     }
 
     protected virtual IEnumerator MoveToPositionCoroutine(List<Room> path, Vector2 goToPosition)
@@ -79,9 +105,11 @@ public class EntityBehavior : MonoBehaviour
             // Snap to the target position when close enough
             transform.position = targetPosition;
 
-            yield return StartCoroutine(PassToDoorCoroutine(doorToOpen));
+            movementCoroutine = StartCoroutine(PassToDoorCoroutine(doorToOpen));
+            yield return movementCoroutine;
             path.RemoveAt(0);
-            yield return StartCoroutine(MoveToPositionCoroutine(path, goToPosition));
+            movementCoroutine = StartCoroutine(MoveToPositionCoroutine(path, goToPosition));
+            yield return movementCoroutine;
         }
     }
 
@@ -103,13 +131,147 @@ public class EntityBehavior : MonoBehaviour
 
     public virtual void TakeDamage(float damage) {
         health -= damage;
+        StartCoroutine(ShakeAnimation(transform, 0.1f, 0.05f));
         if (health <= 0) {
             Die();
         }
     }
 
+    public void AttackEntity(EntityBehavior entity) {
+        currentCoroutine = StartCoroutine(CheckAttackRangeAndAttack(entity));
+    }
+
+   protected virtual IEnumerator CheckAttackRangeAndAttack(EntityBehavior entity)
+    {
+        IEnumerator helperFunc(Vector2 targetPosition) // Change Coroutine to IEnumerator
+        {
+            List<Room> path = pathfinding.GetShortestPath(transform.position, targetPosition);
+            return MoveToPositionCoroutine(path, targetPosition); // Remove StartCoroutine
+        }
+        if (entity.gameObject == null) {
+            Debug.Log("it's gone");
+        }
+        while (!IsEntityDestroyed(entity))
+        {
+            //Debug.Log("Distance is " + Vector2.Distance(transform.position, entity.transform.position) + " and attack range is " + attackRange);
+            if (Vector2.Distance(transform.position, entity.transform.position) <= attackRange)
+            {
+                if (movementCoroutine != null) {
+                    StopCoroutine(movementCoroutine);
+                    movementCoroutine = null;
+                }
+
+                yield return new WaitForSeconds(attackSpeed);
+                if (IsEntityDestroyed(entity)) {
+                    continue;
+                }
+                
+                if (Vector2.Distance(transform.position, entity.transform.position) <= attackRange)
+                {
+                    Debug.Log("attack");
+                    yield return StartCoroutine(AttackAnimation(entity));
+                    entity.TakeDamage(attackDamage);
+                }
+                else
+                {
+                    movementCoroutine = StartCoroutine(helperFunc(entity.transform.position));
+                    while (movementCoroutine != null && Vector2.Distance(transform.position, entity.transform.position) > attackRange) {
+                        yield return null;
+                    }
+                }
+            }
+            else
+            {
+                movementCoroutine = StartCoroutine(helperFunc(entity.transform.position));
+                while (movementCoroutine != null && Vector2.Distance(transform.position, entity.transform.position) > attackRange) {
+                    yield return null;
+                }
+            }
+        }
+    }
+    protected bool IsEntityDestroyed(EntityBehavior entity)
+    {
+        try
+        {
+            return entity == null || entity.gameObject == null;
+        }
+        catch (MissingReferenceException)
+        {
+            return true;
+        }
+    }
+
+    protected virtual IEnumerator AttackAnimation(EntityBehavior entity)
+    {
+        return AttackAnimationCoroutine(entity);
+    }
+
+    protected virtual IEnumerator AttackAnimationCoroutine(EntityBehavior entity)
+    {
+        animationInProgress = true;
+
+        Vector3 originalPosition = transform.position;
+
+        float smallDistance = 0.5f;
+        float largerDistance = 1.0f;
+        float moveDuration = 0.1f;
+        float waitTime = 0.1f;
+
+        Vector3 direction = (entity.transform.position - transform.position).normalized;
+        Vector3 moveAwayTarget = transform.position - direction * smallDistance;
+        yield return StartCoroutine(animationMove(transform, moveAwayTarget, moveDuration));
+
+        yield return new WaitForSeconds(waitTime);
+
+
+        Vector3 moveTowardsTarget = transform.position + direction * (smallDistance + largerDistance);
+        yield return StartCoroutine(animationMove(transform, moveTowardsTarget, moveDuration));
+        yield return StartCoroutine(animationMove(transform, originalPosition, moveDuration));
+
+        animationInProgress = false;
+        yield break;
+    }
+
+    IEnumerator animationMove(Transform t, Vector3 targetPosition, float duration)
+    {
+        Vector3 startPosition = t.position;
+        float elapsedTime = 0;
+
+        while (elapsedTime < duration)
+        {
+            t.position = Vector3.Lerp(startPosition, targetPosition, elapsedTime / duration);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        t.position = targetPosition;
+    }
+
+
+    private IEnumerator ShakeAnimation(Transform target, float duration, float magnitude)
+    {
+        animationInProgress = true;
+
+        Vector3 originalPosition = target.position;
+        float elapsed = 0.0f;
+
+        while (elapsed < duration)
+        {
+            float x = Random.Range(-1f, 1f) * magnitude;
+            float y = Random.Range(-1f, 1f) * magnitude;
+
+            target.position = new Vector3(originalPosition.x + x, originalPosition.y + y, originalPosition.z);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        target.position = originalPosition;
+
+        animationInProgress = false;
+    }
+
     protected virtual void Die() {
         GameEvents.current.EntityDied(this);
-        Destroy(this);
+        Destroy(gameObject);
     }
 }

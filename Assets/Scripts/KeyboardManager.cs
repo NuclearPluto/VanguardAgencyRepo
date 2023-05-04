@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 public class KeyboardManager : MonoBehaviour
 {
     [SerializeField] public UnityEngine.Canvas pauseOverlay;
+    [SerializeField] public UnityEngine.Canvas escapeOverlay;
 
     private UIManager uimanager;
     private InputAction pausePress;
@@ -18,7 +19,6 @@ public class KeyboardManager : MonoBehaviour
         escapePress = inputActions.FindAction("Escape");
     }
     void Start() {
-        uimanager = gameObject.GetComponent<UIManager>();
     }
     private void OnEnable()
     {
@@ -42,7 +42,7 @@ public class KeyboardManager : MonoBehaviour
         escapePress.Disable();
     }
 
-    private void OnTogglePause(InputAction.CallbackContext context) {
+    public void OnTogglePause(InputAction.CallbackContext context) {
         isPaused = !isPaused;
         //pauseOverlay.gameObject.SetActive(isPaused);
         if (isPaused)
@@ -54,7 +54,15 @@ public class KeyboardManager : MonoBehaviour
         pauseOverlay.gameObject.SetActive(isPaused);
     }
 
-    private void OnToggleEscape(InputAction.CallbackContext context) {
+    public void OnToggleEscape(InputAction.CallbackContext context) {
         isEscaped = !isEscaped;
+
+        if (isEscaped) {
+            escapeOverlay.gameObject.SetActive(isEscaped);
+        }
+        else {
+            escapeOverlay.gameObject.GetComponent<EscapeManager>().HideAndDisable();
+        }
+        
     }
 }

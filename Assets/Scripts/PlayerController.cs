@@ -8,6 +8,8 @@ public class PlayerController : EntityBehavior
 
     protected override void Start() {
         base.Start();
+        attackRange = 3f;
+        attackDamage = 1f;
         toggleVision();
     }
 
@@ -45,6 +47,7 @@ public class PlayerController : EntityBehavior
         toggleVision();
         visionRange = newVisionRange;
         toggleVision();
+        GameEvents.current.PlayerVisionChange();
     }
 
     protected override void Die() {

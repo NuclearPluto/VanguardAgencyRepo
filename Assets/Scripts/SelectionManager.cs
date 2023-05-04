@@ -158,10 +158,16 @@ public class SelectionManager : MonoBehaviour
         //Debug.Log($"World position to move to is {GetMouseWorldPosition()}");
         float tempCellWidth = stage.getCellWidth();
         Vector3 tempPosition = GetMouseWorldPosition();
+        Collider2D hitCollider = Physics2D.OverlapPoint(tempPosition);
         tempPosition.y = tempCellWidth * (float)System.Math.Floor((tempPosition.y + tempCellWidth / 2) / tempCellWidth);
-        Debug.Log($"World position to move to is {tempPosition}");
         foreach(GameObject selectedUnit in selectedUnits) {
-            selectedUnit.GetComponent<PlayerController>().MoveToPosition(tempPosition);
+            PlayerController player = selectedUnit.GetComponent<PlayerController>();
+            player.MoveToPosition(tempPosition);
+
+            if (hitCollider != null && hitCollider.CompareTag("Enemy")) {
+                player.StopAllCoroutines();
+                player.AttackEntity(hitCollider.gameObject.GetComponent<EnemyController>());
+            }
         }
     }
 

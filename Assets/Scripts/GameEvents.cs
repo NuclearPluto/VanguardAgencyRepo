@@ -15,10 +15,15 @@ public class GameEvents : MonoBehaviour
     public UnityEvent onPlayerEnterRoom;
     public EntityEvent onEntityDeath;
     public EntityEvent onEntityAdded;
+    public UnityEvent onPlayerVisionChange;
 
     public void PlayerEnteredRoom()
     {
         onPlayerEnterRoom?.Invoke();
+    }
+
+    public void PlayerVisionChange() {
+        onPlayerVisionChange?.Invoke();
     }
 
     public void EntityDied(EntityBehavior entity)
